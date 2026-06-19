@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LogBATT · LinkedIn Content Cockpit</title>
+<style>
+  :root{
+    --lb-bg:#f3f5f4;
+    --lb-surface:#ffffff;
+    --lb-ink:#13201a;
+    --lb-ink-soft:#51635a;
+    --lb-primary:#0b3d24;
+    --lb-primary-2:#11532f;
+    --lb-accent:#ff7a1a;
+    --lb-accent-2:#ffcd3c;
+    --lb-green:#2bbd6f;
+    --lb-border:#e1e7e3;
+    --lb-danger:#d64545;
+    --lb-shadow:rgba(11,61,36,.12);
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--lb-bg); color:var(--lb-ink);
+    font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;
+  }
+  a{color:var(--lb-primary-2);}
+  .container{max-width:980px;margin:0 auto;padding:0 20px 60px;}
+
+  header.topbar{
+    background:linear-gradient(135deg,var(--lb-primary),var(--lb-primary-2));
+    color:#fff; padding:18px 20px;
+  }
+  header.topbar .container{display:flex;align-items:center;justify-content:space-between;padding:0 20px;max-width:980px;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand .word{font-weight:700;font-size:20px;letter-spacing:.2px;}
+  .brand .sub{font-size:12px;opacity:.8;font-weight:400;}
+
+  details.settings{
+    background:var(--lb-surface);border:1px solid var(--lb-border);border-radius:var(--radius);
+    margin:18px 0;box-shadow:0 1px 2px var(--lb-shadow);
+  }
+  details.settings summary{
+    cursor:pointer;padding:14px 18px;font-weight:600;color:var(--lb-primary);list-style:none;
+  }
+  details.settings summary::-webkit-details-marker{display:none;}
+  details.settings summary::before{content:"▸ ";}
+  details.settings[open] summary::before{content:"▾ ";}
+  .settings-body{padding:0 18px 18px;}
+  .field-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px;}
+  .field{flex:1;min-width:220px;}
+  .field label{display:block;font-size:12px;font-weight:600;color:var(--lb-ink-soft);margin-bottom:4px;}
+  .field .keywrap{display:flex;gap:6px;}
+  input[type=text],input[type=password],input[type=number],select,textarea{
+    width:100%;padding:8px 10px;border:1px solid var(--lb-border);border-radius:8px;font-size:13px;
+    background:#fff;color:var(--lb-ink);font-family:inherit;
+  }
+  textarea{resize:vertical;}
+  .btn-mini{padding:6px 10px;border:1px solid var(--lb-border);background:#fff;border-radius:8px;cursor:pointer;font-size:12px;}
+  .hint{font-size:12px;color:var(--lb-ink-soft);}
+  .save-note{font-size:11px;color:var(--lb-green);min-height:14px;}
+
+  main h1{font-size:26px;margin:22px 0 4px;}
+  main .lead{color:var(--lb-ink-soft);margin:0 0 18px;font-size:14px;max-width:680px;}
+
+  .autopilot-bar{
+    background:var(--lb-surface);border:1px solid var(--lb-border);border-radius:var(--radius);
+    padding:16px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 1px 2px var(--lb-shadow);
+  }
+  .btn{
+    padding:10px 16px;border-radius:8px;border:1px solid var(--lb-primary);background:var(--lb-primary);
+    color:#fff;font-weight:600;font-size:13px;cursor:pointer;transition:opacity .15s;
+  }
+  .btn:hover{opacity:.9;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .btn-outline{background:transparent;color:var(--lb-primary);}
+  .btn-accent{background:var(--lb-accent);border-color:var(--lb-accent);}
+  .btn-lg{padding:13px 22px;font-size:14px;}
+  .btn-sm{padding:6px 11px;font-size:12px;}
+  .btn-danger{background:var(--lb-danger);border-color:var(--lb-danger);}
+
+  .stepper{display:flex;gap:8px;flex-wrap:wrap;}
+  .step{
+    font-size:12px;font-weight:600;padding:6px 11px;border-radius:999px;background:#eef1ef;color:var(--lb-ink-soft);
+    border:1px solid var(--lb-border);
+  }
+  .step.running{background:#fff4e3;color:#a05a00;border-color:#ffd699;}
+  .step.done{background:#e6f7ee;color:#0b7a3e;border-color:#bfe9d2;}
+  .step.error{background:#fdeceb;color:#a52a22;border-color:#f3c4c0;}
+
+  ul.log{
+    list-style:none;margin:12px 0 0;padding:10px 12px;max-height:160px;overflow-y:auto;
+    background:#0e1813;border-radius:8px;font-size:12px;font-family:Consolas,monospace;color:#cfe9da;
+  }
+  ul.log li{padding:2px 0;}
+  ul.log li.t-error{color:#ff9f93;}
+  ul.log li.t-success{color:#7be3a8;}
+
+  section.layer{
+    background:var(--lb-surface);border:1px solid var(--lb-border);border-radius:var(--radius);
+    margin:18px 0;padding:18px 20px;box-shadow:0 1px 2px var(--lb-shadow);
+  }
+  section.layer h2{font-size:17px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+  .tag{font-size:11px;font-weight:700;background:var(--lb-primary);color:#fff;border-radius:999px;padding:2px 9px;}
+  .tag.alt{background:var(--lb-accent);}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;}
+  .chip{
+    display:flex;align-items:center;gap:6px;border:1px solid var(--lb-border);border-radius:999px;
+    padding:6px 10px;font-size:12px;cursor:pointer;background:#f8faf9;
+  }
+  .chip.chip-on{background:#e6f3ec;border-color:#bfe0cd;}
+  .chip input{margin:0;}
+  .chip-tag{font-size:10px;color:var(--lb-ink-soft);background:#eef1ef;border-radius:999px;padding:1px 6px;}
+  .chip-x{border:none;background:none;cursor:pointer;color:var(--lb-ink-soft);font-size:12px;padding:0 2px;}
+
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin:10px 0;}
+  .row .field{min-width:140px;flex:initial;}
+  .addform{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;background:#f8faf9;border:1px dashed var(--lb-border);border-radius:8px;padding:10px;margin:10px 0;}
+  .addform .field{min-width:160px;}
+  .check-inline{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--lb-ink-soft);}
+
+  .topic-card{border:1px solid var(--lb-border);border-radius:8px;padding:12px 14px;margin:10px 0;}
+  .topic-card h4{margin:0 0 4px;font-size:13px;}
+  .topic-card .answer{font-size:12px;color:var(--lb-ink-soft);background:#f8faf9;border-radius:6px;padding:7px 9px;margin:6px 0;}
+  .item{display:flex;gap:8px;padding:6px 0;border-top:1px solid #f0f2f1;font-size:12.5px;}
+  .item:first-of-type{border-top:none;}
+  .item .meta{color:var(--lb-ink-soft);font-size:11px;}
+  .item a{word-break:break-all;}
+  .topic-actions{display:flex;gap:8px;margin:4px 0 8px;}
+
+  .pillars-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;margin:10px 0;}
+  .pillar-opt{display:flex;gap:8px;border:1px solid var(--lb-border);border-radius:8px;padding:9px 10px;font-size:12.5px;cursor:pointer;}
+  .pillar-opt b{font-size:12.5px;}
+  .pillar-opt .d{color:var(--lb-ink-soft);font-size:11.5px;}
+
+  .post-card{border:1px solid var(--lb-border);border-radius:10px;padding:14px 16px;margin:12px 0;background:#fcfdfc;}
+  .post-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+  .badge{font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px;}
+  .badge.pillar{background:#eef1ef;color:var(--lb-primary);}
+  .badge.voice{background:#fff4e3;color:#a05a00;}
+  .charcount{font-size:11px;color:var(--lb-ink-soft);}
+  .charcount.warn{color:var(--lb-accent);}
+  .charcount.over{color:var(--lb-danger);font-weight:700;}
+  .hashtags{font-size:12px;color:var(--lb-primary-2);margin:6px 0;}
+  .visual-idea{font-size:12px;color:var(--lb-ink-soft);margin:6px 0;background:#f8faf9;border-radius:6px;padding:7px 9px;}
+  .sources{font-size:11px;color:var(--lb-ink-soft);margin:6px 0;}
+  .post-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+  .feedback-row{display:flex;gap:8px;margin-top:8px;}
+  .feedback-row input{flex:1;}
+
+  details.hist-entry{border:1px solid var(--lb-border);border-radius:8px;padding:8px 12px;margin:8px 0;}
+  details.hist-entry summary{cursor:pointer;font-size:12.5px;display:flex;gap:8px;align-items:center;}
+  .hist-preview{color:var(--lb-ink-soft);}
+  .hist-body{margin-top:8px;font-size:12.5px;}
+  .hist-actions{display:flex;gap:8px;margin-top:6px;}
+
+  .callout{background:#f8faf9;border-left:3px solid var(--lb-accent);padding:10px 14px;border-radius:6px;font-size:12.5px;color:var(--lb-ink-soft);margin:10px 0;}
+  footer{max-width:980px;margin:0 auto;padding:10px 20px 50px;font-size:12px;color:var(--lb-ink-soft);}
+  .empty{color:var(--lb-ink-soft);font-size:12.5px;font-style:italic;}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container">
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 48 48" aria-hidden="true">
+        <rect x="3" y="3" width="42" height="42" rx="10" fill="#ffffff" opacity="0.12"/>
+        <rect x="9" y="14" width="26" height="20" rx="3" fill="#ffffff"/>
+        <rect x="35" y="20" width="4" height="8" rx="1.5" fill="#ffffff"/>
+        <rect x="14" y="19" width="4" height="10" fill="#0b3d24"/>
+        <polygon points="24,18 19,25 23,25 21,30 28,22 24,22" fill="#ff7a1a"/>
+      </svg>
+      <div>
+        <div class="word">LogBATT</div>
+        <div class="sub">LinkedIn Content Cockpit</div>
+      </div>
+    </div>
+    <div class="sub" style="text-align:right;">Recherche &amp; Texterstellung<br>Tavily + Anthropic</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <details class="settings">
+    <summary>⚙️ Einstellungen &amp; API-Keys</summary>
+    <div class="settings-body">
+      <div class="field-row">
+        <div class="field">
+          <label for="tavilyKey">Tavily API-Key</label>
+          <div class="keywrap">
+            <input type="password" id="tavilyKey" placeholder="tvly-...">
+            <button type="button" class="btn-mini" data-toggle-pw="tavilyKey">👁</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="anthropicKey">Anthropic API-Key</label>
+          <div class="keywrap">
+            <input type="password" id="anthropicKey" placeholder="sk-ant-...">
+            <button type="button" class="btn-mini" data-toggle-pw="anthropicKey">👁</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="modelSelect">Claude-Modell</label>
+          <select id="modelSelect">
+            <option value="claude-sonnet-4-6">Claude Sonnet 4.6 (Standard)</option>
+            <option value="claude-opus-4-8">Claude Opus 4.8 (höchste Qualität)</option>
+            <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 (schnell &amp; günstig)</option>
+          </select>
+        </div>
+      </div>
+      <div class="save-note" id="settingsSaveNote"></div>
+      <p class="hint">Die Keys werden ausschließlich lokal in deinem Browser gespeichert (localStorage) und nur direkt an api.tavily.com bzw. api.anthropic.com gesendet – nie an einen anderen Server. Tavily-Key: <a href="https://tavily.com" target="_blank" rel="noopener">tavily.com</a>, Anthropic-Key: <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a>.</p>
+    </div>
+  </details>
+
+  <main>
+    <h1>LinkedIn Content Cockpit</h1>
+    <p class="lead">Drei Ebenen, ein Lauf: (1) Tavily recherchiert Branchen-News &amp; Trends rund um Batterielogistik, Circular Economy und Regulatorik, (2) Tavily analysiert, welche Beitragsformate auf LinkedIn aktuell funktionieren, (3) Claude schreibt daraus fertige, deutsche LinkedIn-Posts für LogBATT. Jede Ebene läuft auch einzeln und manuell steuerbar.</p>
+
+    <div class="autopilot-bar">
+      <button id="autopilotBtn" class="btn btn-accent btn-lg">🚀 Vollautomatisch-Lauf starten</button>
+      <div class="stepper">
+        <span class="step" id="stepPill1">1 · Recherche</span>
+        <span class="step" id="stepPill2">2 · Format</span>
+        <span class="step" id="stepPill3">3 · Content</span>
+      </div>
+    </div>
+    <ul class="log" id="logPanel"></ul>
+
+    <!-- LAYER 1 -->
+    <section class="layer" id="layer1">
+      <h2>Layer 1 — Trend- &amp; Themenrecherche <span class="tag">Tavily</span></h2>
+      <p class="hint">Sucht aktuelle Nachrichten zu Batteriesicherheit, Havariefällen, Regulatorik, Circular Economy und dem Marktumfeld. Bewusst breiter als nur „LogBATT" gefasst.</p>
+      <div class="chips" id="topicChips"></div>
+      <div class="addform">
+        <div class="field"><label>Eigenes Thema – Bezeichnung</label><input type="text" id="newTopicLabel" placeholder="z.B. Batterie-Förderprogramme EU"></div>
+        <div class="field" style="flex:2;"><label>Suchanfrage</label><input type="text" id="newTopicQuery" placeholder="z.B. EU Förderprogramm Batterieproduktion Recycling"></div>
+        <button type="button" class="btn btn-outline btn-sm" id="addTopicBtn">+ Thema hinzufügen</button>
+      </div>
+      <div class="row">
+        <div class="field"><label>Suchtiefe</label><select id="l1depth"><option value="basic" selected>Basic</option><option value="advanced">Advanced</option></select></div>
+        <div class="field"><label>Zeitraum</label><select id="l1days"><option value="7">7 Tage</option><option value="14" selected>14 Tage</option><option value="30">30 Tage</option><option value="90">90 Tage</option></select></div>
+        <div class="field"><label>Treffer / Thema</label><select id="l1max"><option value="4">4</option><option value="6" selected>6</option><option value="8">8</option></select></div>
+        <button type="button" class="btn" id="runLayer1Btn">Recherche starten</button>
+      </div>
+      <div id="layer1Results"><p class="empty">Noch keine Recherche gelaufen.</p></div>
+    </section>
+
+    <!-- LAYER 2 -->
+    <section class="layer" id="layer2">
+      <h2>Layer 2 — Format-Recherche <span class="tag alt">Tavily</span></h2>
+      <p class="hint">Sucht nach Beitragsformaten, Hooks und Strategien, die bei Vorreitern (Northvolt, Stena Recycling, Umicore …) und im B2B-Bereich auf LinkedIn aktuell ziehen. Hinweis: LinkedIn-Beiträge selbst sind kaum öffentlich indexiert – diese Recherche liefert daher vor allem Sekundärquellen (Strategie-/Trendartikel) und vereinzelt öffentlich auffindbare Profile/Beiträge, kein vollständiges Feed-Scraping.</p>
+      <div class="chips" id="formatChips"></div>
+      <div class="addform">
+        <div class="field"><label>Eigene Quelle/Frage – Bezeichnung</label><input type="text" id="newFormatLabel" placeholder="z.B. Redwood Materials auf LinkedIn"></div>
+        <div class="field" style="flex:2;"><label>Suchanfrage</label><input type="text" id="newFormatQuery" placeholder="z.B. Redwood Materials LinkedIn Content Strategie"></div>
+        <label class="check-inline"><input type="checkbox" id="newFormatLinkedinOnly"> nur linkedin.com</label>
+        <button type="button" class="btn btn-outline btn-sm" id="addFormatBtn">+ Hinzufügen</button>
+      </div>
+      <div class="row">
+        <div class="field"><label>Suchtiefe</label><select id="l2depth"><option value="basic" selected>Basic</option><option value="advanced">Advanced</option></select></div>
+        <div class="field"><label>Treffer / Thema</label><select id="l2max"><option value="4">4</option><option value="6" selected>6</option><option value="8">8</option></select></div>
+        <button type="button" class="btn" id="runLayer2Btn">Format-Analyse starten</button>
+      </div>
+      <div id="layer2Results"><p class="empty">Noch keine Format-Analyse gelaufen.</p></div>
+    </section>
+
+    <!-- LAYER 3 -->
+    <section class="layer" id="layer3">
+      <h2>Layer 3 — Content-Erstellung <span class="tag">Anthropic</span></h2>
+      <p class="hint">Schreibt fertige, deutsche LinkedIn-Posts auf Basis der ausgewählten Recherche-Ergebnisse, des LogBATT-Unternehmenskontexts und der Content-Säulen unten. Faktenbasierte Aussagen (Vorfälle, Zahlen, Regulatorik) werden nur aus den Recherche-Quellen übernommen.</p>
+      <p class="hint"><b>Content-Säulen</b> (nichts auswählen = Claude wählt selbst eine passende Mischung):</p>
+      <div class="pillars-grid" id="pillarsGrid"></div>
+      <div class="row">
+        <div class="field"><label>Anzahl Posts</label><select id="postCount"><option value="1">1</option><option value="3">3</option><option value="5" selected>5</option><option value="7">7 (Wochenplan)</option></select></div>
+        <div class="field"><label>Stimme</label><select id="voiceSelect">
+          <option value="mix" selected>Mix (Unternehmen ↔ Gerd)</option>
+          <option value="unternehmen">Nur Unternehmensstimme</option>
+          <option value="gerd">Nur Ich-Perspektive (Gerd)</option>
+        </select></div>
+        <div class="field"><label>Ton</label><select id="toneSelect">
+          <option value="auto" selected>Automatisch je Säule</option>
+          <option value="sachlich">Sachlich-fundiert</option>
+          <option value="dramatisch">Packend-dramatisch</option>
+          <option value="nahbar">Nahbar / Storytelling</option>
+        </select></div>
+        <div class="field"><label>Hashtags/Post</label><select id="hashtagCount"><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option></select></div>
+        <div class="field"><label>CTA</label><select id="ctaSelect">
+          <option value="frage" selected>Diskussionsfrage</option>
+          <option value="soft">Soft-CTA zu LogBATT</option>
+          <option value="keine">Kein CTA</option>
+        </select></div>
+        <div class="field"><label>Emojis</label><select id="emojiSelect">
+          <option value="sparsam" selected>Sparsam</option>
+          <option value="standard">Standard</option>
+          <option value="keine">Keine</option>
+        </select></div>
+      </div>
+      <button type="button" class="btn btn-accent" id="runLayer3Btn">✍️ Content generieren</button>
+      <div id="generatedPosts"></div>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="layer" id="history">
+      <h2>Content-Historie</h2>
+      <p class="hint">Jeder generierte Post wird automatisch hier gespeichert (lokal, im Browser). Export als JSON zur Weiterverarbeitung z.B. in n8n (für Planung/Veröffentlichung).</p>
+      <div class="row">
+        <button type="button" class="btn btn-outline btn-sm" id="exportJsonBtn">⬇️ Historie als JSON exportieren</button>
+        <button type="button" class="btn btn-danger btn-sm" id="clearHistoryBtn">🗑️ Historie löschen</button>
+      </div>
+      <div id="historyList"><p class="empty">Noch keine gespeicherten Posts.</p></div>
+    </section>
+
+    <div class="callout">
+      <b>Hinweis zur Veröffentlichung:</b> LinkedIn erlaubt automatisiertes Posten nur über die Community Management API mit OAuth2, organisationsweiter Freigabe (w_organization_social) und Partner-Review durch LinkedIn – nicht über einen einfachen API-Key. Dieses Tool deckt daher bewusst nur Recherche + Texterstellung ab. Für die tatsächliche Veröffentlichung/Planung: exportierte Posts (JSON-Button oben) in n8n einlesen und dort per LinkedIn-Node/OAuth posten oder einplanen.<br><br>
+      <b>Faktencheck-Pflicht:</b> Bitte jeden Post vor Veröffentlichung gegen die Quellen prüfen, insbesondere bei Gefahrgut-/Regulatorik-Aussagen. Dieses Tool liefert Entwürfe, keine geprüften Fachaussagen.
+    </div>
+  </main>
+</div>
+
+<footer>
+  LogBATT GmbH · Am Filswehr 2, 73207 Plochingen — internes Content-Tool, keine externe Datenübertragung außer an Tavily &amp; Anthropic. Branding-Farben sind eine Annäherung (automatischer Zugriff auf logbatt.de war beim Bau dieses Tools blockiert) und über die CSS-Variablen am Dateianfang leicht anpassbar.
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  const LOGBATT_CONTEXT = `LogBATT GmbH mit Sitz in Plochingen (Am Filswehr 2, 73207 Plochingen) wurde 2017 gegründet und hat sich von Anfang an auf die Entwicklung von Transport- und Lagerboxen für Lithium-Ionen-Batterien und das Anbieten logistischer Gesamtlösungen spezialisiert. Seit Juli 2023 hält die Lagermax Group eine Dreiviertelmehrheit der Geschäftsanteile; LogBATT gilt als Pionier und umfassend zertifizierter Komplettdienstleister im Bereich Reverse Logistik für Lithium-Ionen-Batterien, eingegliedert in die Lagermax-Division Green Logistics, die damit ihre Sparten Entsorgungslogistik und Recycling um die Batterielogistik ergänzt.
+
+Das Geschäftsmodell hat zwei eng verzahnte Säulen:
+
+Erstens die Logistikdienstleistung selbst: Abholen und Lagern, Verpacken, Befördern und die Verbringung zur Recyclinganlage oder zum Bestimmungsort — ein vollständiger Ablauf, sodass Kunden die einzelnen Schritte nicht über mehrere Dienstleister koordinieren müssen. Das deckt Entsorgung, Recycling, Transport und sichere Lagerung von E-Auto-Batterien ab. Das funktioniert europaweit über ein europaweites Logistik- und Batterieentsorgernetzwerk, plus konkret dokumentierte Langstrecken-Touren (z.B. Abholfahrten für HV-Speicher nach UK, Polen, Skandinavien, Schweiz, Österreich, Ungarn, Belgien, Niederlande).
+
+Zweitens die eigene Produktentwicklung als Basis dafür: LogBATT ist Hersteller der SafetyBATTbox-Familie und entwickelt und produziert die Transport-, Lager- und Quarantänebehälter selbst – inklusive eigener realer Brandtests und BAM-Bauartzulassungen. Diese Boxen sind genau die zertifizierten Kisten für nicht defekte, defekte und kritisch defekte Lithium-Ionen-Batterien; für kritisch defekte Batterien existiert eine Verfahrensfestlegung nach ADR 2025 P911/LP906 – die höchste gefahrgutrechtliche Anforderungsstufe.
+
+Die Zertifizierungsbasis: LogBATT ist nach DIN EN ISO 9001 und ISO 14001 zertifiziert, verfügt über das Qualitätssicherungsprogramm Gefahrgutverpackungen (QSP) und ist anerkannter Entsorgungsfachbetrieb (EfB). Zusätzlich besitzt LogBATT die Genehmigungen zum Sammeln, Befördern und Makeln gefährlicher Abfälle sowie eine Zulassung für den US-Markt (DOT Special Permit).
+
+Branche und Größenordnung: Die LogBATT GmbH beschäftigte 2022 ca. 35 Mitarbeiter*innen und erwirtschaftete einen Umsatz von 8,7 Millionen Euro; am Standort Plochingen bei Stuttgart befinden sich neben dem Head Office Produktionsstätten, Logistik sowie ein Entwicklungszentrum. Zielbranche primär Automotive: spezialisiert auf Logistik von Lithium-Ionen-Batterien, insbesondere in der Automobilindustrie, mit dokumentierten Kunden/Partnern wie Northvolt, Volvo Truck und Stena Recycling.`;
+
+  const CONTENT_PILLARS = [
+    {id:'gefahr', emoji:'⚠️', label:'Gefahr & Havariefälle', desc:'Thermal Runaway, Akkubrände, reale Vorfälle: was technisch passiert, wenn eine Lithium-Ionen-Batterie versagt – dramatisch, aber faktenbasiert, mit Konsequenz & Lösung.'},
+    {id:'mythos', emoji:'🧠', label:'Insider-Wissen & Mythen-Check', desc:'„Die meisten glauben X über Batterielagerung – das stimmt so nicht." Spricht das Jobrisiko von Procurement, EHS & Lagerleitung an.'},
+    {id:'regulatorik', emoji:'📋', label:'Regulatorik & Compliance', desc:'Änderungen bei ADR, UN 38.3, EU-Batterieverordnung & Co. – unglamourös, aber stark gesucht, stärkt thematische Autorität.'},
+    {id:'einblick', emoji:'🏭', label:'Einblick / Behind-the-Scenes', desc:'SafetyBATTbox im Einsatz, echte Havariefall-Response, Standort-Einblick – Prozess-Content, den die Zielgruppe sonst nie sieht.'},
+    {id:'daten', emoji:'📊', label:'Daten & Trends', desc:'Statistik-getriebene Posts (z.B. Vorfallzahlen vs. E-Bike-Adoption) inkl. Diagramm-Idee – positioniert LogBATT als analytische Autorität.'},
+    {id:'people', emoji:'🎤', label:'People-First (Experten-Stimme)', desc:'Ich-Perspektive einer technischen Expertenfigur bei LogBATT ("Gerd", Platzhalter) – performt oft besser als reine Unternehmensposts.'},
+    {id:'circular-wide', emoji:'🌍', label:'Circular Economy & Batterie-Bedeutung (breit)', desc:'Bewusst über LogBATT hinausgedacht: Energiewende, Mobilität, Kreislaufwirtschaft, Rohstoffe – LogBATT als Teil eines größeren Systems.'}
+  ];
+
+  const DEFAULT_TOPICS = [
+    {id:'havarie', label:'Lithium-Akku Brände & Havariefälle', query:'Lithium-Ionen Akku Brand Vorfall Lager Transport Unfall', enabled:true, isDefault:true},
+    {id:'ebike', label:'E-Bike/E-Scooter Akkubrände', query:'E-Bike Akku Brand Feuerwehr Tiefgarage', enabled:true, isDefault:true},
+    {id:'regulatorik', label:'Regulatorik: ADR, UN 38.3, EU-Batterieverordnung', query:'EU Batterieverordnung ADR Gefahrgut Lithium Batterien neue Vorschrift Änderung', enabled:true, isDefault:true},
+    {id:'circular', label:'Circular Economy & Batterierecycling', query:'Batterierecycling Circular Economy Lithium-Ionen Kreislaufwirtschaft Trend', enabled:true, isDefault:true},
+    {id:'secondlife', label:'Second-Life Batterien & Stationärspeicher', query:'Second-Life Batterien Second Use stationäre Speicher Trend', enabled:false, isDefault:true},
+    {id:'automotive', label:'Automotive & E-Mobility Batterielogistik', query:'Elektromobilität Batterielogistik Lieferkette Automotive News', enabled:true, isDefault:true},
+    {id:'rohstoffe', label:'Rohstoffe & Versorgungssicherheit', query:'Lithium Kobalt Rohstoffe Batterie Versorgungssicherheit Europa', enabled:false, isDefault:true},
+    {id:'wettbewerb', label:'Marktumfeld: Northvolt, Stena Recycling, Umicore & Co.', query:'Northvolt Stena Recycling Umicore Batterie Recycling Logistik News', enabled:false, isDefault:true}
+  ];
+
+  const DEFAULT_FORMAT_QUERIES = [
+    {id:'b2b-format', label:'B2B-Content-Formate & Hooks (allgemein)', query:'beste LinkedIn Post Formate B2B Industrie Thought Leadership Beispiele', domain:null, enabled:true, isDefault:true},
+    {id:'storytelling', label:'Storytelling & Hook-Formeln für LinkedIn', query:'LinkedIn Hook Formeln Storytelling B2B Experte erfolgreiche Beiträge', domain:null, enabled:true, isDefault:true},
+    {id:'nachhaltigkeit-content', label:'Content-Trends Nachhaltigkeit/Recycling', query:'LinkedIn Content Trends Nachhaltigkeit Recycling Kreislaufwirtschaft Unternehmen', domain:null, enabled:true, isDefault:true},
+    {id:'northvolt-li', label:'Northvolt auf LinkedIn', query:'Northvolt LinkedIn Content Strategie Beiträge', domain:'linkedin.com', enabled:true, isDefault:true},
+    {id:'stena-li', label:'Stena Recycling auf LinkedIn', query:'Stena Recycling LinkedIn Beiträge', domain:'linkedin.com', enabled:false, isDefault:true},
+    {id:'umicore-li', label:'Umicore Battery Recycling auf LinkedIn', query:'Umicore Battery Recycling LinkedIn', domain:'linkedin.com', enabled:false, isDefault:true},
+    {id:'industrial-safety-content', label:'Industrial/Safety Behind-the-Scenes Content', query:'Industrial Safety Behind the Scenes Video LinkedIn B2B Content Beispiele', domain:null, enabled:true, isDefault:true},
+    {id:'founder-voice', label:'Personal-Branding / Experten-Stimme auf LinkedIn', query:'LinkedIn Personal Branding Experte Mitarbeiter Stimme Unternehmen Reichweite Studie', domain:null, enabled:false, isDefault:true}
+  ];
+
+  const LS_KEYS = {settings:'lbcc_settings', topics:'lbcc_topics', formats:'lbcc_formats', history:'lbcc_history'};
+
+  function loadJson(key, fallback){
+    try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; }
+  }
+  function saveJson(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+
+  const state = {
+    settings: Object.assign({tavilyKey:'', anthropicKey:'', model:'claude-sonnet-4-6'}, loadJson(LS_KEYS.settings, {})),
+    topics: loadJson(LS_KEYS.topics, DEFAULT_TOPICS),
+    formats: loadJson(LS_KEYS.formats, DEFAULT_FORMAT_QUERIES),
+    layer1Results: [],
+    layer2Results: [],
+    generatedPosts: [],
+    history: loadJson(LS_KEYS.history, [])
+  };
+
+  function $(id){ return document.getElementById(id); }
+  function escapeHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+  function nowStamp(){ const d=new Date(); return d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
+  function uid(){ return (crypto.randomUUID ? crypto.randomUUID() : 'id-'+Date.now()+'-'+Math.random().toString(16).slice(2)); }
+
+  function log(msg, type){
+    const li = document.createElement('li');
+    li.className = type ? 't-'+type : '';
+    li.textContent = '['+nowStamp()+'] '+msg;
+    const panel = $('logPanel');
+    panel.appendChild(li);
+    panel.scrollTop = panel.scrollHeight;
+  }
+
+  function setStep(n, status){
+    const pill = $('stepPill'+n);
+    pill.className = 'step' + (status ? ' '+status : '');
+  }
+
+  // ---------- Settings ----------
+  function applySettingsToForm(){
+    $('tavilyKey').value = state.settings.tavilyKey || '';
+    $('anthropicKey').value = state.settings.anthropicKey || '';
+    $('modelSelect').value = state.settings.model || 'claude-sonnet-4-6';
+  }
+  function bindSettings(){
+    ['tavilyKey','anthropicKey','modelSelect'].forEach(id=>{
+      $(id).addEventListener('change', ()=>{
+        state.settings.tavilyKey = $('tavilyKey').value.trim();
+        state.settings.anthropicKey = $('anthropicKey').value.trim();
+        state.settings.model = $('modelSelect').value;
+        saveJson(LS_KEYS.settings, state.settings);
+        const note = $('settingsSaveNote');
+        note.textContent = 'Gespeichert ✓';
+        setTimeout(()=>{ note.textContent=''; }, 1500);
+      });
+    });
+    document.querySelectorAll('[data-toggle-pw]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const inp = $(btn.dataset.togglePw);
+        inp.type = inp.type === 'password' ? 'text' : 'password';
+      });
+    });
+  }
+
+  // ---------- Chips (Layer1/Layer2 topic management) ----------
+  function renderChips(containerId, list){
+    const el = $(containerId);
+    el.innerHTML = list.map((t,idx)=>(
+      '<label class="chip '+(t.enabled?'chip-on':'')+'">'+
+      '<input type="checkbox" data-idx="'+idx+'" '+(t.enabled?'checked':'')+'>'+
+      '<span>'+escapeHtml(t.label)+'</span>'+
+      (t.domain ? '<span class="chip-tag">🔗 '+escapeHtml(t.domain)+'</span>' : '')+
+      (!t.isDefault ? '<button type="button" class="chip-x" data-idx="'+idx+'" aria-label="Entfernen">✕</button>' : '')+
+      '</label>'
+    )).join('');
+  }
+  function renderTopicChips(){ renderChips('topicChips', state.topics); }
+  function renderFormatChips(){ renderChips('formatChips', state.formats); }
+
+  $('topicChips').addEventListener('change', e=>{
+    if(e.target.matches('input[type=checkbox]')){
+      state.topics[+e.target.dataset.idx].enabled = e.target.checked;
+      saveJson(LS_KEYS.topics, state.topics);
+      renderTopicChips();
+    }
+  });
+  $('topicChips').addEventListener('click', e=>{
+    if(e.target.matches('.chip-x')){
+      state.topics.splice(+e.target.dataset.idx,1);
+      saveJson(LS_KEYS.topics, state.topics);
+      renderTopicChips();
+    }
+  });
+  $('formatChips').addEventListener('change', e=>{
+    if(e.target.matches('input[type=checkbox]')){
+      state.formats[+e.target.dataset.idx].enabled = e.target.checked;
+      saveJson(LS_KEYS.formats, state.formats);
+      renderFormatChips();
+    }
+  });
+  $('formatChips').addEventListener('click', e=>{
+    if(e.target.matches('.chip-x')){
+      state.formats.splice(+e.target.dataset.idx,1);
+      saveJson(LS_KEYS.formats, state.formats);
+      renderFormatChips();
+    }
+  });
+
+  $('addTopicBtn').addEventListener('click', ()=>{
+    const label = $('newTopicLabel').value.trim();
+    const query = $('newTopicQuery').value.trim();
+    if(!label || !query) return;
+    state.topics.push({id:'custom-'+Date.now(), label, query, enabled:true, isDefault:false});
+    saveJson(LS_KEYS.topics, state.topics);
+    renderTopicChips();
+    $('newTopicLabel').value=''; $('newTopicQuery').value='';
+  });
+  $('addFormatBtn').addEventListener('click', ()=>{
+    const label = $('newFormatLabel').value.trim();
+    const query = $('newFormatQuery').value.trim();
+    const onlyLinkedin = $('newFormatLinkedinOnly').checked;
+    if(!label || !query) return;
+    state.formats.push({id:'custom-'+Date.now(), label, query, domain: onlyLinkedin?'linkedin.com':null, enabled:true, isDefault:false});
+    saveJson(LS_KEYS.formats, state.formats);
+    renderFormatChips();
+    $('newFormatLabel').value=''; $('newFormatQuery').value=''; $('newFormatLinkedinOnly').checked=false;
+  });
+
+  // ---------- Pillars ----------
+  function renderPillars(){
+    $('pillarsGrid').innerHTML = CONTENT_PILLARS.map(p=>(
+      '<label class="pillar-opt"><input type="checkbox" data-pillar="'+p.id+'">'+
+      '<span><b>'+p.emoji+' '+escapeHtml(p.label)+'</b><br><span class="d">'+escapeHtml(p.desc)+'</span></span></label>'
+    )).join('');
+  }
+  function selectedPillars(){
+    return Array.from(document.querySelectorAll('[data-pillar]')).filter(c=>c.checked).map(c=>c.dataset.pillar);
+  }
+
+  // ---------- Tavily ----------
+  async function tavilyFetch(query, opts){
+    opts = opts || {};
+    if(!state.settings.tavilyKey){ throw new Error('Kein Tavily API-Key hinterlegt (siehe Einstellungen).'); }
+    const body = {
+      api_key: state.settings.tavilyKey,
+      query: query,
+      search_depth: opts.searchDepth || 'basic',
+      topic: opts.topic || 'general',
+      max_results: opts.maxResults || 6,
+      include_answer: true,
+      include_raw_content: false
+    };
+    if(body.topic === 'news' && opts.days){ body.days = opts.days; }
+    if(opts.includeDomains){ body.include_domains = opts.includeDomains; }
+    const res = await fetch('https://api.tavily.com/search', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    if(!res.ok){
+      const t = await res.text();
+      throw new Error('Tavily-Fehler '+res.status+': '+t.slice(0,200));
+    }
+    return res.json();
+  }
+
+  // ---------- Anthropic ----------
+  async function claudeFetch(system, userMsg, maxTokens){
+    if(!state.settings.anthropicKey){ throw new Error('Kein Anthropic API-Key hinterlegt (siehe Einstellungen).'); }
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': state.settings.anthropicKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body: JSON.stringify({
+        model: state.settings.model || 'claude-sonnet-4-6',
+        max_tokens: maxTokens || 4000,
+        system: system,
+        messages: [{role:'user', content: userMsg}]
+      })
+    });
+    if(!res.ok){
+      const t = await res.text();
+      throw new Error('Claude-Fehler '+res.status+': '+t.slice(0,300));
+    }
+    const data = await res.json();
+    return (data.content||[]).map(c=>c.text||'').join('\n');
+  }
+
+  function extractJson(text){
+    let t = (text||'').trim();
+    t = t.replace(/^```[a-zA-Z]*\n?/,'').replace(/```\s*$/,'').trim();
+    try{ return JSON.parse(t); }catch(e){}
+    const firstBracket = t.search(/[\[{]/);
+    if(firstBracket>=0){
+      const open = t[firstBracket];
+      const close = open==='[' ? ']' : '}';
+      const last = t.lastIndexOf(close);
+      if(last>firstBracket){
+        try{ return JSON.parse(t.slice(firstBracket,last+1)); }catch(e){}
+      }
+    }
+    throw new Error('Antwort konnte nicht als JSON gelesen werden: '+t.slice(0,150));
+  }
+
+  // ---------- Layer 1 ----------
+  async function runLayer1(){
+    const topics = state.topics.filter(t=>t.enabled);
+    if(!topics.length){ log('Keine Recherche-Themen ausgewählt.','error'); return; }
+    if(!state.settings.tavilyKey){ log('Kein Tavily API-Key hinterlegt.','error'); return; }
+    setStep(1,'running');
+    $('runLayer1Btn').disabled = true;
+    const depth = $('l1depth').value;
+    const days = parseInt($('l1days').value,10);
+    const maxResults = parseInt($('l1max').value,10);
+    state.layer1Results = [];
+    let okCount = 0;
+    for(const t of topics){
+      log('🔍 Recherche: "'+t.label+'" …');
+      try{
+        const data = await tavilyFetch(t.query, {topic:'news', days, maxResults, searchDepth:depth});
+        const items = (data.results||[]).map(r=>({title:r.title, url:r.url, content:r.content||'', publishedDate:r.published_date||'', score:r.score, selected:true}));
+        state.layer1Results.push({label:t.label, answer:data.answer||'', items});
+        log('✅ "'+t.label+'": '+items.length+' Treffer', 'success');
+        okCount++;
+      }catch(err){
+        log('⚠️ "'+t.label+'": '+err.message, 'error');
+      }
+      await sleep(250);
+    }
+    renderLayer1Results();
+    $('runLayer1Btn').disabled = false;
+    setStep(1, okCount ? 'done' : 'error');
+  }
+
+  function renderResultCards(containerId, results, prefix){
+    const el = $(containerId);
+    if(!results.length){ el.innerHTML = '<p class="empty">Keine Ergebnisse.</p>'; return; }
+    el.innerHTML = results.map((topic, ti)=>(
+      '<div class="topic-card">'+
+        '<h4>'+escapeHtml(topic.label)+'</h4>'+
+        (topic.answer ? '<div class="answer"><b>Kurzfazit:</b> '+escapeHtml(topic.answer)+'</div>' : '')+
+        '<div class="topic-actions">'+
+          '<button type="button" class="btn-mini" data-selall="'+ti+'" data-val="true" data-prefix="'+prefix+'">Alle ✓</button>'+
+          '<button type="button" class="btn-mini" data-selall="'+ti+'" data-val="false" data-prefix="'+prefix+'">Alle ✗</button>'+
+        '</div>'+
+        (topic.items.length ? topic.items.map((it,ii)=>(
+          '<label class="item">'+
+            '<input type="checkbox" data-titem="'+ti+'" data-iitem="'+ii+'" data-prefix="'+prefix+'" '+(it.selected?'checked':'')+'>'+
+            '<span><b>'+escapeHtml(it.title)+'</b><br>'+
+            '<span class="meta">'+escapeHtml(it.publishedDate||'o.D.')+' · <a href="'+escapeHtml(it.url)+'" target="_blank" rel="noopener">'+escapeHtml(it.url)+'</a></span><br>'+
+            escapeHtml((it.content||'').slice(0,220))+(it.content && it.content.length>220 ? '…' : '')+
+            '</span>'+
+          '</label>'
+        )).join('') : '<p class="empty">Keine Treffer.</p>')+
+      '</div>'
+    )).join('');
+  }
+  function renderLayer1Results(){ renderResultCards('layer1Results', state.layer1Results, 'l1'); }
+  function renderLayer2Results(){ renderResultCards('layer2Results', state.layer2Results, 'l2'); }
+
+  function wireResultEvents(containerId, getResults){
+    $(containerId).addEventListener('change', e=>{
+      if(e.target.matches('input[data-titem]')){
+        const ti = +e.target.dataset.titem, ii = +e.target.dataset.iitem;
+        getResults()[ti].items[ii].selected = e.target.checked;
+      }
+    });
+    $(containerId).addEventListener('click', e=>{
+      if(e.target.matches('[data-selall]')){
+        const ti = +e.target.dataset.selall, val = e.target.dataset.val === 'true';
+        getResults()[ti].items.forEach(it=>{ it.selected = val; });
+        if(containerId==='layer1Results') renderLayer1Results(); else renderLayer2Results();
+      }
+    });
+  }
+  wireResultEvents('layer1Results', ()=>state.layer1Results);
+  wireResultEvents('layer2Results', ()=>state.layer2Results);
+
+  // ---------- Layer 2 ----------
+  async function runLayer2(){
+    const queries = state.formats.filter(q=>q.enabled);
+    if(!queries.length){ log('Keine Format-Quellen ausgewählt.','error'); return; }
+    if(!state.settings.tavilyKey){ log('Kein Tavily API-Key hinterlegt.','error'); return; }
+    setStep(2,'running');
+    $('runLayer2Btn').disabled = true;
+    const depth = $('l2depth').value;
+    const maxResults = parseInt($('l2max').value,10);
+    state.layer2Results = [];
+    let okCount = 0;
+    for(const q of queries){
+      log('🔍 Format-Recherche: "'+q.label+'" …');
+      try{
+        const data = await tavilyFetch(q.query, {topic:'general', maxResults, searchDepth:depth, includeDomains: q.domain ? [q.domain] : null});
+        const items = (data.results||[]).map(r=>({title:r.title, url:r.url, content:r.content||'', publishedDate:r.published_date||'', score:r.score, selected:true}));
+        state.layer2Results.push({label:q.label, answer:data.answer||'', items});
+        log('✅ "'+q.label+'": '+items.length+' Treffer', 'success');
+        okCount++;
+      }catch(err){
+        log('⚠️ "'+q.label+'": '+err.message, 'error');
+      }
+      await sleep(250);
+    }
+    renderLayer2Results();
+    $('runLayer2Btn').disabled = false;
+    setStep(2, okCount ? 'done' : 'error');
+  }
+
+  // ---------- Layer 3 ----------
+  function gatherSelectedSources(results){
+    const lines = [];
+    for(const topic of results){
+      const sel = topic.items.filter(i=>i.selected);
+      if(!sel.length && !topic.answer) continue;
+      if(topic.answer) lines.push('### '+topic.label+' — Kurzfazit: '+topic.answer);
+      for(const i of sel){
+        lines.push('- ['+topic.label+'] '+i.title+' ('+(i.publishedDate||'o.D.')+') — '+(i.content||'').slice(0,400)+' (Quelle: '+i.url+')');
+      }
+    }
+    return lines.length ? lines.join('\n') : '';
+  }
+
+  function pillarsBlock(){
+    return CONTENT_PILLARS.map(p=>p.emoji+' '+p.label+' ['+p.id+']: '+p.desc).join('\n');
+  }
+
+  function buildSystemPrompt(){
+    return 'Du bist der erfahrene LinkedIn-Content-Stratege und Texter für die LogBATT GmbH, einen B2B-Spezialisten für Lithium-Ionen-Batterielogistik. Du schreibst ausschließlich auf Deutsch, für ein Fachpublikum aus Procurement, EHS/Arbeitssicherheit, Lager- und Logistikleitung, Gefahrgutbeauftragten und Entscheidern in Automotive/Recycling.\n\n'+
+    '## Unternehmenskontext (LogBATT GmbH) — als Faktenbasis, nicht erweitern oder erfinden\n'+LOGBATT_CONTEXT+'\n\n'+
+    '## Content-Säulen (Strategie-Menü)\n'+pillarsBlock()+'\n\n'+
+    'Das Themenfeld darf bewusst über LogBATT im engeren Sinne hinausgehen (Circular Economy, Batterien allgemein, Energiewende, Rohstoffe, Regulatorik) – wichtig ist ein erkennbarer inhaltlicher Bezug zu LogBATTs Expertise und Geschäft.\n\n'+
+    '## Schreibregeln für LinkedIn (Deutsch, B2B)\n'+
+    '- Erste Zeile = harter Hook, der ohne "Mehr anzeigen"-Klick funktioniert (max. ca. 150 Zeichen), keine Clickbait-Übertreibung.\n'+
+    '- Kurze Absätze (1–3 Sätze), großzügige Zeilenumbrüche, gut scannbar.\n'+
+    '- Konkret und fachlich präzise statt Marketing-Floskeln; keine generischen Buzzword-Sätze ohne Inhalt.\n'+
+    '- Emoji-Nutzung sparsam und gezielt, niemals inflationär.\n'+
+    '- Stimme "unternehmen": Wir-Perspektive von LogBATT, sachlich-souverän.\n'+
+    '- Stimme "gerd": Ich-Perspektive einer technischen Expertenfigur bei LogBATT (Platzhaltername "Gerd", darf vom Nutzer durch eine echte Person ersetzt werden), persönlicher, darf eine pointierte fachliche Meinung einbringen, bleibt aber seriös.\n'+
+    '- Jeder Post braucht einen klaren Punkt/eine klare These – kein loses Aneinanderreihen von Fakten.\n\n'+
+    '## Faktentreue (besonders wichtig bei Gefahr/Regulatorik/Daten-Posts)\n'+
+    '- Nutze für konkrete Vorfälle, Zahlen, Statistiken und Regulatorik-Aussagen ausschließlich die im User-Prompt mitgelieferten Recherche-Ergebnisse (inkl. Quellen-URLs).\n'+
+    '- Erfinde KEINE konkreten Vorfälle, Unternehmen, Opferzahlen, Prozentsätze oder Zitate, die nicht durch die Recherche gedeckt sind.\n'+
+    '- Liegen zu einem Aspekt keine Recherchedaten vor, bleibe bewusst allgemeiner oder kennzeichne die Aussage sprachlich als Einschätzung statt als belegten Fakt.\n'+
+    '- "sources_used" darf nur URLs enthalten, die inhaltlich tatsächlich in den Post eingeflossen sind (leeres Array, wenn keine externe Quelle verwendet wurde, z.B. bei reinem Behind-the-Scenes- oder People-First-Content).\n\n'+
+    '## Format-Erkenntnisse aus LinkedIn-Analyse\n'+
+    'Im User-Prompt findest du ggf. Recherche-Erkenntnisse darüber, welche Beitragsformate/Hooks/Strukturen auf LinkedIn aktuell funktionieren (Layer 2). Wende diese sinnvoll auf die Struktur deiner Posts an, ohne sie zu kopieren.\n\n'+
+    '## Output-Format\n'+
+    'Antworte AUSSCHLIESSLICH mit einem validen JSON-Array (keine Markdown-Codeblöcke, kein Fließtext davor oder danach). Jedes Element:\n'+
+    '{\n'+
+    '  "pillar": "<eine der IDs: gefahr|mythos|regulatorik|einblick|daten|people|circular-wide>",\n'+
+    '  "voice": "unternehmen" oder "gerd",\n'+
+    '  "text": "<vollständiger Post-Text, erste Zeile ist der Hook, \\n für Zeilenumbrüche, OHNE Hashtags am Ende>",\n'+
+    '  "hashtags": ["#Beispiel", "..."],\n'+
+    '  "visual_idea": "<kurzer, konkreter Vorschlag für Bild/Video/Karussell zu diesem Post>",\n'+
+    '  "sources_used": ["<url>", "..."]\n'+
+    '}';
+  }
+
+  function buildUserPrompt(p){
+    const l1 = gatherSelectedSources(state.layer1Results) || '(keine Layer-1-Recherche vorhanden oder ausgewählt)';
+    const l2 = gatherSelectedSources(state.layer2Results) || '(keine Layer-2-Recherche vorhanden oder ausgewählt)';
+    const pillarLine = p.pillars.length
+      ? 'Fokussiere ausschließlich auf diese Content-Säulen, möglichst gleichmäßig über die Posts verteilt: '+p.pillars.join(', ')+'.'
+      : 'Wähle eine sinnvolle Mischung aus den Content-Säulen, passend zur Aktualität/Relevanz der Recherche-Ergebnisse.';
+    const voiceLine = {mix:'Wechsle die Stimme zwischen "unternehmen" und "gerd" sinnvoll über die Posts ab.', unternehmen:'Nutze ausschließlich die Stimme "unternehmen".', gerd:'Nutze ausschließlich die Stimme "gerd".'}[p.voice];
+    const toneLine = {auto:'Wähle den Ton passend zur jeweiligen Content-Säule (z.B. dramatischer bei Gefahr, nahbarer bei People-First).', sachlich:'Ton durchgängig sachlich-fundiert.', dramatisch:'Ton durchgängig packend-dramatisch (aber faktentreu).', nahbar:'Ton durchgängig nahbar/storytelling-orientiert.'}[p.tone];
+    const ctaLine = {frage:'Beende jeden Post mit einer echten Diskussionsfrage an die Zielgruppe.', soft:'Beende jeden Post mit einem dezenten Hinweis auf LogBATTs Lösung/Kontakt, ohne aufdringlich zu wirken.', keine:'Kein CTA – reiner Informations-/Mehrwert-Post.'}[p.cta];
+    const emojiLine = {sparsam:'Maximal 0–2 gezielte Emojis pro Post.', standard:'Moderate, aber nicht übertriebene Emoji-Nutzung.', keine:'Keine Emojis.'}[p.emoji];
+
+    return '## Recherche-Ergebnisse Layer 1 (aktuelle Branchen-News/Trends)\n'+l1+'\n\n'+
+      '## Recherche-Ergebnisse Layer 2 (LinkedIn-Format-Analyse)\n'+l2+'\n\n'+
+      '## Auftrag\nErstelle '+p.count+' eigenständige LinkedIn-Posts auf Deutsch für die LogBATT GmbH.\n\n'+
+      '- '+pillarLine+'\n'+
+      '- '+voiceLine+'\n'+
+      '- '+toneLine+'\n'+
+      '- Hashtags pro Post: genau '+p.hashtagCount+', deutsch/englisch gemischt wo branchenüblich.\n'+
+      '- '+ctaLine+'\n'+
+      '- '+emojiLine+'\n\n'+
+      'Antworte NUR mit dem JSON-Array gemäß Schema aus dem System-Prompt.';
+  }
+
+  function collectGenParams(){
+    return {
+      count: parseInt($('postCount').value,10),
+      pillars: selectedPillars(),
+      voice: $('voiceSelect').value,
+      tone: $('toneSelect').value,
+      hashtagCount: parseInt($('hashtagCount').value,10),
+      cta: $('ctaSelect').value,
+      emoji: $('emojiSelect').value
+    };
+  }
+
+  async function runLayer3(){
+    if(!state.settings.anthropicKey){ log('Kein Anthropic API-Key hinterlegt.','error'); return; }
+    setStep(3,'running');
+    $('runLayer3Btn').disabled = true;
+    try{
+      const params = collectGenParams();
+      const sys = buildSystemPrompt();
+      const usr = buildUserPrompt(params);
+      const maxTokens = Math.min(8000, 1000 + params.count*700);
+      log('✍️ Claude schreibt '+params.count+' Post(s) …');
+      const raw = await claudeFetch(sys, usr, maxTokens);
+      const posts = extractJson(raw);
+      state.generatedPosts = posts.map(p=>Object.assign({}, p, {id: uid(), createdAt: Date.now()}));
+      renderGeneratedPosts();
+      state.generatedPosts.forEach(addToHistory);
+      log('✅ '+posts.length+' Post(s) erstellt und in Historie gespeichert.','success');
+      setStep(3,'done');
+    }catch(err){
+      log('❌ Content-Erstellung fehlgeschlagen: '+err.message,'error');
+      setStep(3,'error');
+    }
+    $('runLayer3Btn').disabled = false;
+  }
+
+  function pillarMeta(id){ return CONTENT_PILLARS.find(p=>p.id===id) || {emoji:'📝', label:id}; }
+  function fullPostText(post){
+    const tags = (post.hashtags||[]).join(' ');
+    return post.text + (tags ? '\n\n'+tags : '');
+  }
+
+  function renderGeneratedPosts(){
+    const el = $('generatedPosts');
+    if(!state.generatedPosts.length){ el.innerHTML = '<p class="empty">Noch kein Content generiert.</p>'; return; }
+    el.innerHTML = state.generatedPosts.map((post, idx)=>{
+      const meta = pillarMeta(post.pillar);
+      const len = fullPostText(post).length;
+      const lenClass = len>3000 ? 'over' : (len>2800 ? 'warn' : '');
+      return '<div class="post-card" data-postidx="'+idx+'">'+
+        '<div class="post-head">'+
+          '<div><span class="badge pillar">'+meta.emoji+' '+escapeHtml(meta.label)+'</span> '+
+          '<span class="badge voice">'+escapeHtml(post.voice==='gerd'?'Gerd (Ich-Stimme)':'Unternehmen')+'</span></div>'+
+          '<span class="charcount '+lenClass+'">'+len+' / 3000 Zeichen</span>'+
+        '</div>'+
+        '<textarea rows="9" data-edit-text="'+idx+'">'+escapeHtml(post.text)+'</textarea>'+
+        '<div class="hashtags">'+escapeHtml((post.hashtags||[]).join(' '))+'</div>'+
+        (post.visual_idea ? '<div class="visual-idea">🎬 <b>Visual-Idee:</b> '+escapeHtml(post.visual_idea)+'</div>' : '')+
+        ((post.sources_used||[]).length ? '<div class="sources">Quellen: '+post.sources_used.map(u=>'<a href="'+escapeHtml(u)+'" target="_blank" rel="noopener">'+escapeHtml(u)+'</a>').join(', ')+'</div>' : '')+
+        '<div class="post-actions">'+
+          '<button type="button" class="btn-mini" data-copy="'+idx+'">📋 Kopieren</button>'+
+          '<button type="button" class="btn-mini" data-update-hist="'+idx+'">💾 In Historie aktualisieren</button>'+
+          '<button type="button" class="btn-mini" data-discard="'+idx+'">🗑️ Verwerfen</button>'+
+        '</div>'+
+        '<div class="feedback-row">'+
+          '<input type="text" placeholder="Feedback zur Überarbeitung (optional) …" data-feedback="'+idx+'">'+
+          '<button type="button" class="btn-mini" data-regen="'+idx+'">🔄 Überarbeiten</button>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+
+  $('generatedPosts').addEventListener('input', e=>{
+    if(e.target.matches('[data-edit-text]')){
+      const idx = +e.target.dataset.editText;
+      state.generatedPosts[idx].text = e.target.value;
+      const card = e.target.closest('.post-card');
+      const len = fullPostText(state.generatedPosts[idx]).length;
+      const counter = card.querySelector('.charcount');
+      counter.textContent = len+' / 3000 Zeichen';
+      counter.className = 'charcount' + (len>3000?' over':(len>2800?' warn':''));
+    }
+  });
+  $('generatedPosts').addEventListener('click', async e=>{
+    if(e.target.matches('[data-copy]')){
+      const idx = +e.target.dataset.copy;
+      await navigator.clipboard.writeText(fullPostText(state.generatedPosts[idx]));
+      e.target.textContent = '✅ Kopiert';
+      setTimeout(()=>{ e.target.textContent = '📋 Kopieren'; }, 1500);
+    }
+    if(e.target.matches('[data-discard]')){
+      const idx = +e.target.dataset.discard;
+      state.generatedPosts.splice(idx,1);
+      renderGeneratedPosts();
+    }
+    if(e.target.matches('[data-update-hist]')){
+      const idx = +e.target.dataset.updateHist;
+      const post = state.generatedPosts[idx];
+      const h = state.history.find(x=>x.id===post.id);
+      if(h){ Object.assign(h, post); saveJson(LS_KEYS.history, state.history); renderHistory(); }
+      e.target.textContent = '✅ Aktualisiert';
+      setTimeout(()=>{ e.target.textContent = '💾 In Historie aktualisieren'; }, 1500);
+    }
+    if(e.target.matches('[data-regen]')){
+      const idx = +e.target.dataset.regen;
+      const card = e.target.closest('.post-card');
+      const feedbackInput = card.querySelector('[data-feedback]');
+      await regeneratePost(idx, feedbackInput.value.trim());
+    }
+  });
+
+  async function regeneratePost(idx, feedback){
+    const post = state.generatedPosts[idx];
+    log('🔄 Überarbeite Post ('+post.pillar+') …');
+    try{
+      const sys = buildSystemPrompt();
+      const usr = 'Bestehender Post-Entwurf (Säule: '+post.pillar+', Stimme: '+post.voice+'):\n\n'+post.text+
+        '\n\nHashtags bisher: '+(post.hashtags||[]).join(' ')+
+        '\n\nFeedback zur Überarbeitung: '+(feedback || 'Allgemein verbessern, Hook stärken, Klarheit erhöhen.')+
+        '\n\nAntworte NUR mit einem einzelnen JSON-Objekt (kein Array) im selben Schema wie ein Eintrag des Arrays aus dem System-Prompt.';
+      const raw = await claudeFetch(sys, usr, 1500);
+      const updated = extractJson(raw);
+      Object.assign(post, updated);
+      renderGeneratedPosts();
+      log('✅ Post überarbeitet.','success');
+    }catch(err){
+      log('❌ Überarbeitung fehlgeschlagen: '+err.message,'error');
+    }
+  }
+
+  // ---------- History ----------
+  function addToHistory(post){
+    state.history.unshift({
+      id: post.id, createdAt: post.createdAt, pillar: post.pillar, voice: post.voice,
+      text: post.text, hashtags: post.hashtags||[], visual_idea: post.visual_idea||'', sources_used: post.sources_used||[]
+    });
+    if(state.history.length>200) state.history.length = 200;
+    saveJson(LS_KEYS.history, state.history);
+    renderHistory();
+  }
+  function renderHistory(){
+    const el = $('historyList');
+    if(!state.history.length){ el.innerHTML = '<p class="empty">Noch keine gespeicherten Posts.</p>'; return; }
+    el.innerHTML = state.history.map((h,idx)=>{
+      const meta = pillarMeta(h.pillar);
+      const date = new Date(h.createdAt).toLocaleString('de-DE');
+      const preview = h.text.slice(0,90).replace(/\n/g,' ');
+      return '<details class="hist-entry">'+
+        '<summary><span class="badge pillar">'+meta.emoji+'</span> <span class="hist-preview">'+date+' — '+escapeHtml(preview)+'…</span></summary>'+
+        '<div class="hist-body">'+escapeHtml(h.text).replace(/\n/g,'<br>')+
+        (h.hashtags.length ? '<div class="hashtags">'+escapeHtml(h.hashtags.join(' '))+'</div>' : '')+
+        '</div>'+
+        '<div class="hist-actions">'+
+          '<button type="button" class="btn-mini" data-hist-copy="'+idx+'">📋 Kopieren</button>'+
+          '<button type="button" class="btn-mini" data-hist-del="'+idx+'">🗑️ Löschen</button>'+
+        '</div>'+
+      '</details>';
+    }).join('');
+  }
+  $('historyList').addEventListener('click', async e=>{
+    if(e.target.matches('[data-hist-copy]')){
+      const idx = +e.target.dataset.histCopy;
+      const h = state.history[idx];
+      await navigator.clipboard.writeText(h.text + (h.hashtags.length ? '\n\n'+h.hashtags.join(' ') : ''));
+      e.target.textContent = '✅ Kopiert';
+      setTimeout(()=>{ e.target.textContent = '📋 Kopieren'; }, 1500);
+    }
+    if(e.target.matches('[data-hist-del]')){
+      const idx = +e.target.dataset.histDel;
+      state.history.splice(idx,1);
+      saveJson(LS_KEYS.history, state.history);
+      renderHistory();
+    }
+  });
+
+  $('exportJsonBtn').addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(state.history, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const d = new Date();
+    const stamp = d.toISOString().slice(0,10);
+    a.href = url;
+    a.download = 'logbatt-linkedin-content-'+stamp+'.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+  $('clearHistoryBtn').addEventListener('click', ()=>{
+    if(!confirm('Gesamte Content-Historie wirklich löschen? Dies kann nicht rückgängig gemacht werden.')) return;
+    state.history = [];
+    saveJson(LS_KEYS.history, state.history);
+    renderHistory();
+  });
+
+  // ---------- Autopilot ----------
+  async function runAutopilot(){
+    if(!state.settings.tavilyKey || !state.settings.anthropicKey){
+      log('❌ Bitte zuerst Tavily- und Anthropic-API-Key in den Einstellungen hinterlegen.','error');
+      document.querySelector('details.settings').open = true;
+      return;
+    }
+    $('autopilotBtn').disabled = true;
+    log('🚀 Autopilot gestartet …');
+    try{
+      await runLayer1();
+      await runLayer2();
+      await runLayer3();
+      log('🏁 Autopilot abgeschlossen.','success');
+      document.getElementById('layer3').scrollIntoView({behavior:'smooth', block:'start'});
+    } finally {
+      $('autopilotBtn').disabled = false;
+    }
+  }
+
+  $('autopilotBtn').addEventListener('click', runAutopilot);
+  $('runLayer1Btn').addEventListener('click', runLayer1);
+  $('runLayer2Btn').addEventListener('click', runLayer2);
+  $('runLayer3Btn').addEventListener('click', runLayer3);
+
+  // ---------- Init ----------
+  applySettingsToForm();
+  bindSettings();
+  renderTopicChips();
+  renderFormatChips();
+  renderPillars();
+  renderHistory();
+})();
+</script>
+</body>
+</html>
