@@ -32,6 +32,7 @@ werden in die passenden Bausteine eingearbeitet und in `quellen/` protokolliert.
 | 15 | `15_niederlassungsspezifisch.md` | Standort-Abläufe: Plochingen (LOGBATT), SENEC (Zoll), Salzburg-Timesped | 21st NL |
 | 16 | `16_aktueller-prozess-handbuch.md` | **Aktueller LogBATT-Prozess** (Stand 2025): Vertrieb→Dispo→Abrechnung, Sammelfaktura, T&T | Einführung + Prozessschritte |
 | 17 | `17_sendungsstatus-und-compliance.md` | **Sendungsstatus manuell setzen** (ZU/012, AB/290) + **Compliance-/Sanktionsprüfung** | Sendungsstatus IOD/POD + Compliance |
+| ⤷ | `ANLEITUNG_logik-export.md` | **How-To: lBase-Logik exportieren** (Module, GenTabs, Wertebereiche, Matrix, LI-Debug) – exakte Menüpfade | abgeleitet |
 | — | `quellen/README.md` | Quellenverzeichnis + Änderungsprotokoll | — |
 
 > **Zwei Ebenen im Netz:** [01]–[05]/[09] beschreiben den **generischen Logikinterpreter
