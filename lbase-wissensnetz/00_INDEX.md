@@ -31,6 +31,7 @@ werden in die passenden Bausteine eingearbeitet und in `quellen/` protokolliert.
 | 14 | `14_logbatt-abrechnung-konditionen.md` | **LOGBATT-Abrechnungslogik** (Module, Matrix-Konvention, Berechnungs-Elemente) | Kondition |
 | 15 | `15_niederlassungsspezifisch.md` | Standort-Abläufe: Plochingen (LOGBATT), SENEC (Zoll), Salzburg-Timesped | 21st NL |
 | 16 | `16_aktueller-prozess-handbuch.md` | **Aktueller LogBATT-Prozess** (Stand 2025): Vertrieb→Dispo→Abrechnung, Sammelfaktura, T&T | Einführung + Prozessschritte |
+| 17 | `17_sendungsstatus-und-compliance.md` | **Sendungsstatus manuell setzen** (ZU/012, AB/290) + **Compliance-/Sanktionsprüfung** | Sendungsstatus IOD/POD + Compliance |
 | — | `quellen/README.md` | Quellenverzeichnis + Änderungsprotokoll | — |
 
 > **Zwei Ebenen im Netz:** [01]–[05]/[09] beschreiben den **generischen Logikinterpreter
@@ -118,6 +119,7 @@ werden in die passenden Bausteine eingearbeitet und in `quellen/` protokolliert.
 - **„Wie rechnet LogBATT ab? Was bedeutet Element TRANS_KMV / Matrix PLO_…?“** → [14](14_logbatt-abrechnung-konditionen.md)
 - **„Wie läuft Plochingen-Batterie / SENEC-Zoll / Salzburg-LIM?“** → [15](15_niederlassungsspezifisch.md)
 - **„Wie ist der aktuelle Gesamtprozess (Angebot→Abrechnung, Sammelfaktura, Track&Trace)?“** → [16](16_aktueller-prozess-handbuch.md)
+- **„Wie setze ich manuell einen Sendungsstatus (zugestellt/abgeholt)? Wie läuft die Compliance-/Sanktionsprüfung?“** → [17](17_sendungsstatus-und-compliance.md)
 
 ---
 

@@ -109,6 +109,13 @@ Siehe ausführlich [08]:
 | **ORGID / AG_ID / ADRID** | Organisations-/Arbeitsgruppen-/Adress-ID (→ [12]/[13]) |
 | **DBI** | Deckungsbeitrag I (Tagespreis-Berechnung) (→ [15]) |
 | **ZO / SV (Zoll)** | Zollgut / Selbstverzoller (Sperrgründe) (→ [15]) |
+| **Statusbehandlung** | Maske zum manuellen Setzen des Sendungsstatus (→ [17]) |
+| **Sendungsstatus-Codes** | ZU/012 zugestellt, AB/290 abgeholt, ZU/001 unterwegs, ZU/053 Auslieferdepot, ZU/54 in Zustellung (→ [16]/[17]) |
+| **IOD / POD** | Information/Proof of Delivery – Sendungsstatus-Doku (→ [17]) |
+| **Complianceprüfung** | Sanktionslisten-Screening; Sperre „ungeprüft“ bis Freigabe (→ [17]) |
+| **Whitelist (Attribut)** | Adress-Attribut, das eine Adresse dauerhaft von der Compliance-Sperre freistellt (→ [17]) |
+| **OFAC / BIS / EU-Sanktionsliste** | US/EU-Sanktionslisten zur Compliance-Prüfung (→ [17]) |
+| **Evidenz** | LA-Typ „Sonstiges (Evidenz)“, u. a. für Complianceprüfung (→ [17]) |
 
 ## GenTab-Kürzel (Schnellindex → [13])
 LMX_SDG_VAR (Pflichtfelder) · LMX_STD_VAR · LMX_SDG_LIM · LMX_SDG_AUTO · LMX_FAR_AUTO ·

@@ -73,6 +73,7 @@ an Finance) → **Hinweis an Logistik**.
   „In Vorbereitung“ (immer) · **„Abgeholt“ = AB & 290** · **„Unterwegs“ = ZU & 001** ·
   **„Im Auslieferdepot“ = ZU & 053** · **„In Zustellung“ = ZU & 54** ·
   **„Erfolgreich zugestellt“ = ZU & 012**. Datum = Zeitstempel.
+  → **Konkretes Vorgehen zum manuellen Setzen** dieser Stati in [17](17_sendungsstatus-und-compliance.md).
 
 ## Abrechnung (Proz. F35–45)
 

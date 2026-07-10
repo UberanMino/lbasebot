@@ -39,6 +39,21 @@ dokumentiert, damit Aussagen nachvollziehbar bleiben.
 > (2024). Batch 2 = **LBase 21st** (real eingesetztes System) + konkrete **LOGBATT-Abrechnung**
 > + aktueller Prozess (2025). Bei Prozess-Widersprüchen gilt der neuere Stand ([16] vor [07]).
 
+## Eingearbeitete Quellen – Batch 3 (Stand: 2026-07-10)
+
+| Kürzel | Dokument | Typ | Eingearbeitet in |
+|---|---|---|---|
+| **EINF-PDF** | LBase_Einführung (PDF-Fassung der PPTX) | PDF, 27 S. (Seite = Folie) | bereits in [16]; jetzt visuell referenzierbar ([11]) |
+| **PROZ-1.7-PDF** | LBase_Prozessschritte v1.7 (PDF-Fassung der PPTX) | PDF, 68 S. (Seite = Folie) | bereits in [16]; jetzt visuell referenzierbar ([11]) |
+| **ST-IOD** | 20250129_Sendungsstatus_IOD | DOCX | [17] |
+| **ST-POD** | 20250327_Sendungsstatus_POD | PDF, 4 S. | [17] |
+| **COMPL** | Anleitung Compliance-Prüfung LBase (Felix Bauer) | PDF, 3 S. | [17] |
+
+> **Hinweis:** Die beiden Präsentationen wurden vom Nutzer als **PDF** nachgereicht → Folien
+> jetzt **renderbar** (PDF-Seite = Foliennummer); Kerninhalte waren bereits über die PPTX in
+> [16]. ST-IOD und ST-POD sind inhaltsgleich (dieselbe „Status setzen“-Anleitung, unterschiedl.
+> Datum/Format) und gemeinsam in [17] abgebildet.
+
 ## Noch offen / angekündigt
 
 - **Schulungstranskripte** (folgen laut Nutzer) → werden thematisch in [01]–[16]

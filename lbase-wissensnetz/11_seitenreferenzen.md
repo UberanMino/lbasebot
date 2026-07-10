@@ -208,3 +208,27 @@ Vertrieb F2–11 · Logistik/Angebot F12–25 · Disposition F26–28 · Track &
 Abrechnung F35–45 · Finance/Buchungsperiode F46–50 · Eingangsvorschau F51–54 · RV F55 ·
 Adressen F56 · Produktion/Hallenscannung F57–58 · Fahrer-App F59 · Key-User F60 ·
 Ticketsystem F61–62 · Matrizen finden F63 · Gruppenauswertung F64–68.
+
+> ℹ️ Beide Präsentationen liegen jetzt **zusätzlich als PDF** vor (EINF 27 S., PROZ-1.7 68 S.),
+> **PDF-Seite = Foliennummer**. Screenshots damit direkt aufschlagbar (F<n> = PDF-Seite n).
+
+---
+
+## Batch 3 – Status & Compliance (kleine Anleitungen)
+
+### ST-IOD / ST-POD – Sendungsstatus setzen (docx 29.01.2025 / pdf 27.03.2025, 4 S.) → [17]
+
+| Thema | Seite | 🖼 | Baustein |
+|---|---|---|---|
+| Methode 1: Fahrt wählen → Status-Knopf (nur markierte Sendung) | 1 | 🖼 Dispomaske | [17] |
+| Auswahlfenster (Firma/NL/Abt./AG) → OK; Statusbehandlungs-Maske | 2 | 🖼 Auswahl + Statusmaske | [17] |
+| **Zustellung: ZU / 012** + Empfänger + Datum → Zuweisen → Speichern | 2–3 | 🖼 | [17] |
+| **Abholung: AB / 290** + Absender + Datum → Zuweisen → Speichern | 4 | 🖼 | [17] |
+
+### COMPL – Compliance-Prüfung (pdf, Felix Bauer, 04.10.2024, 3 S.) → [17]
+
+| Thema | Seite | 🖼 | Baustein |
+|---|---|---|---|
+| Sendung „ungeprüft“; zwei LAs (Evidenz/Complianceprüfung + Ausdruck/E-Mail) | 1 | 🖼 Sendung + LA-Übersicht + Compliance-LA (OFAC-Treffer „ATLANTIS“) | [17] |
+| Prüf-Links EU/US (webgate/sanctionsmap/BIS/OFAC); Freigabe/Whitelist | 2 | 🖼 | [17] |
+| Nach Freigabe → Transport-LAs entstehen; echter Treffer → AG informieren + stoppen | 3 | 🖼 | [17] |
