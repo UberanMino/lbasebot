@@ -149,6 +149,25 @@ ideal für „warum wird genau *dieser* Fall so behandelt?".
 Alle Formate kann ich direkt auswerten. Danach kann ich die **reale Logik** (statt nur der
 Beschreibung) ins Wissensnetz einarbeiten.
 
+## ⚠️ Häufige Fehler (aus der Praxis)
+
+1. **Modul-Export ist (fast) leer / nur eine Zeile.**
+   Ursache: Beim „in Datei kopieren“ war **nur die Cursor-Zeile markiert**, nicht das ganze
+   Modul. → Vor dem Export **alle Zeilen markieren**: erste Zeile anklicken, dann ans
+   **Modulende springen** (Feld „Gehe zu Zeile“ = **-1**) und mit **Shift+Klick** auf die
+   letzte Zeile den gesamten Bereich markieren (alternativ **Strg+A** im Zeilenbereich testen).
+   Erst wenn **alle Zeilen blau hinterlegt** sind → „in Datei kopieren“.
+   *Kontrolle: eine `.me` eines echten Moduls ist i. d. R. viele KB groß, nicht wenige Byte.*
+
+2. **GenTab-Export enthält nur die Tabellenliste statt der Inhalte.**
+   Ursache: Es wurde die **Definition** (Liste aller Tabellen: *Tabellen-ID / Bezeichnung /
+   Komponente*) exportiert statt der **Daten** (Zeileninhalt). → In der Ribbon-Gruppe
+   **Generische Tabellen** auf **„Daten“** (nicht „Definition“) gehen, die Tabelle
+   (z. B. `LMX_LBATT_KO`) wählen/filtern, sodass die **einzelnen Konditionszeilen** erscheinen,
+   und **diese** per **DATEI → Senden an → MS Excel** exportieren.
+   *Kontrolle: die Datei enthält viele Zeilen mit Adress-/RV-/Element-Bezug, nicht nur 2–3 Zeilen
+   mit Tabellennamen.*
+
 ## ⚠️ Vertraulichkeit
 Modul- und GenTab-/Matrix-Exporte enthalten teils **echte Kundennummern, Rahmenverträge und
 Preise**. Für die Analyse ist das unproblematisch, aber es sind vertrauliche Konditionen –

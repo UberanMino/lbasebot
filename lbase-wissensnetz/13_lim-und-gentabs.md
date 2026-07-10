@@ -71,6 +71,53 @@ Verwandt: **Wertebereiche** (z. B. `X_LOGB_BER`, `X_LBATT_EINH`) und **Komponent
 > Rückfragen steht die IT bereit.“** Regeln (z. B. wann Automatik greift) im Team/mit
 > Gruppenleiter abstimmen.
 
+### Vollständiges GenTab-Verzeichnis (aus System-Export, 134 Tabellen)
+
+Quelle: Export der GenTab-**Definition** aus MD DEV (`LBATT_KO1.xlsx`, Stand Test 2026). Zeigt
+alle vorhandenen generischen Tabellen mit Bezeichnung. *(Hinweis: Dies ist die Definition/Liste,
+nicht der Zeileninhalt der Tabellen.)*
+
+**LOGBATT-spezifisch (Komponente `Cust_LOGBATT` u. a.):**
+| Tabelle | Bezeichnung |
+|---|---|
+| `LMX_LBATT_KO` | Zu berechnende Einstellungen in Konditionen (→ [14]) |
+| `LMX_LBATT_TX` | Logbatt Konditionstexte (→ [14]) |
+| `LMX_LB_RV` | Rahmenverträge Logbatt |
+| `LMX_LB_KV` | Kopfverträge Logbatt |
+| `LMX_BATT_DB` | Batteriedatenbank LogBATT |
+| `LB_SBOX_TEST` | Prüfung SafetyBATTbox Modelle |
+
+**Compliance (→ [17]):** `LMX_COM_FREI` (User zur Freigabe der Compliance-Treffer) ·
+`COM_AUSNAHME` (Compliance Ausnahmen) · `COM_BUCCHECK` / `COM_SATCHECK` (Adresstypen-Prüfung).
+
+**Sendung/Fahrt-Steuerung:** `LMX_SDG_VAR`*→ n. i. Export, s. u.* · `LMX_STD_VAR`
+(Standardvarianten) · `LMX_SDG_LIM` (GenTab für LIMs) · `LMX_SDG_AUTO` (autom. tägl. Sendungen) ·
+`LMX_FAR_AUTO` (autom. Fahrtanlage) · `LMX_FAR_SDGA` (autom. Fahrt aus Sendung) ·
+`LMX_SDG_DR` (Druck-LA’s Sendung) · `LMX_FAR_DR` (Ausdrucke Fahrt) · `LMX_SDG_AB`
+(Abrechnungs-LA’s) · `LMX_SDG_TR` (Transport-LA’s) · `LMX_SDG_REL` (Relationsermittlung) ·
+`LMX_SDG_KST` / `LMX_FAR_KST` (Kostenstellenermittlung) · `LMX_SDG_STAT` (Statusvergabe) ·
+`LMX_SDG_STOP` (Sendung stoppen) · `LMX_SDG_HWT` (Hinweistexte) · `LMX_STD_VKM`
+(Standardverkehrsmittel) · `LMX_SOT_VKM` (SOT aktive Fahrzeuge) · `LMX_FAR_EV` /
+`LMX_EV_PLAN` (EV-Anlage/-Kalkulation) · `LMX_WF_FARID` / `LMX_WF_ADRID` / `LMX_KD_BASIS`
+(Workflows) · `LMX_STAT_WF` (Statusworkflow) · `LMX_FAR_MAIL` (Mailversand bei FSW).
+
+**Abrechnung/Steuer/Zoll:** `LMX_ABR_GGEW` (Grenzgewicht) · `LMX_ABR_SPER` (Sperrigkeit) ·
+`LMX_ABR_FUEL` (Treibstoffzuschlag) · `LMX_ABR_ZUSA` (Zusatzleistungen) · `LMX_ABR_LAG`
+(Lagerabrechnung) · `LMX_ABR_BTY` (Belegtyp) · `LMX_ZOLLDIEN` (Zolldienstleistungen, → [15]) ·
+`KVAT_VANID`/`SVAT_VANID` (USt-Ermittlung) · `LB_STC_KBEZ` (Steuercode-Kurzbez.) ·
+`SKZK_KRIT` (Konditionen Zusatzkriterien) · `SYS_KTYPVAR` (Konditionstyp-Variablen).
+
+**Driver App / Scan:** `LMX_SOT_VKM` · `LMX_TOR_SCAN` (gültige Tore Gegenscan) · `LMX_SCAN_AUS`
+(Ausnahmen Auto-Dispo) · `LBASE_APP_NA` (Driver-App-Namen) · `LMX_FAR_LAUF` (Laufzeit bei Entladescan).
+
+> Der komplette Export mit allen 134 Definitionen liegt vor; die obigen sind die für LogBATT
+> relevanten. Weitere u. a.: `LMX_MAUT_PLZ`, `LMX_FEIERTAG`, `LMX_LINIEN`, `LMX_PRODUKT`,
+> `LMX_ADR_SUCH`, `LMX_EDI*`, `LMX_NV_GEB`, `LBASE_GEWPFL` (frachtpfl. Gewicht), `LBASE_EINV`.
+
+> ⚠️ **Noch offen:** Der **Zeileninhalt** von `LMX_LBATT_KO` und `LMX_LBATT_TX` (die eigentliche
+> Abrechnungs-Steuerung) ist damit **noch nicht** exportiert – dazu die **Daten** (nicht die
+> Definition) ausgeben (siehe `ANLEITUNG_logik-export.md`, Abschnitt B).
+
 ## Wertebereiche & Komponenten (LOGBATT-relevant, → [14])
 - **Wertebereich `X_LOGB_BER`** – Katalog aller LOGBATT-Berechnungs-Elemente (neue Elemente
   müssen hier zuerst aufgenommen werden).
