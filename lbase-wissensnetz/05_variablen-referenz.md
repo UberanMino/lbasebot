@@ -2,6 +2,10 @@
 
 ← [Index](00_INDEX.md) · verwandt: [04 Formate](04_formate-referenz.md) · [09 Rezepte](09_uebungen-rezepte.md)
 
+> 📄 Quelle: T102-HB **S.68–73 (gedr. -63- bis -68-)**. Die **nummerierte
+> Sendungserfassungsmaske** (Feld↔Variable) ist der 🖼 Screenshot auf **HB S.71 (gedr. -66-)**;
+> die zugehörige Variablentabelle folgt auf S.72–73. Deklarierte Variablen: **HB S.70 (gedr. -65-)**.
+
 ## Grundprinzip
 
 Variablen speichern Werte – Eingänge/Ausgänge von der Trägerapplikation, Zwischen- und

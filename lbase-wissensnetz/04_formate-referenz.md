@@ -2,6 +2,10 @@
 
 ← [Index](00_INDEX.md) · verwandt: [03 Moduleditor](03_module-startbedingung-version.md) · [05 Variablen](05_variablen-referenz.md) · [09 Rezepte](09_uebungen-rezepte.md)
 
+> 📄 **Seitengenau:** Jedes Format ist im T102-Handbuch mit Screenshot dokumentiert – die
+> exakte PDF-/gedruckte Seite je Format steht in [11 Seitenreferenzen](11_seitenreferenzen.md).
+> Grobe Orientierung: Formate = **HB S.26–67 (gedr. -21- bis -62-)**.
+
 **Formate** sind die „Befehle“ der LI-Sprache. Sie erhalten Daten als **Parameter
 (Variablen)** oder direkt. Viele Parameterfelder unterstützen die Suchfunktion **[F5]**.
 Hier die wichtigsten Formate (vollständige Liste: Online-Hilfe **[F1]**).

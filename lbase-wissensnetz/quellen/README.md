@@ -6,13 +6,19 @@ dokumentiert, damit Aussagen nachvollziehbar bleiben.
 
 ## Eingearbeitete Quellen (Stand: 2026-07-10)
 
-| Kürzel | Dokument | Typ | Eingearbeitet in |
+| Kürzel | Dokument | Typ (physische Seiten) | Eingearbeitet in |
 |---|---|---|---|
-| **T102-HB** | T102 – Logikinterpreter (Handbuch für Anfänger/Administratoren), Axians ICT Austria 2024 | PDF, 46 S. | [01], [02], [03], [04], [05] |
-| **T102-UE** | T102 – Logikinterpreter, Übungen | PDF, 26 S. | [09] (+ Kriteriumssatz-Prioritäten in [02]) |
-| **PROZ-L3** | L3 – LBase Prozessdokumentation V1 (Stand 04.12.2024) | DOCX | [07] |
-| **SAKT** | Handout zum Start Pilotprojekt „Digitaler Sendungsakt“ (Maik Großhäuser, LMX Salzburg) | PDF, 4 S. | [08] |
-| **BASIS** | Unterlagen für User nach Basis-Schulung (Tipps & Tricks, Funktionstasten, Filter, Beschlagwortung) | PDF, 13 S. | [06], [08] |
+| **T102-HB** | T102 – Logikinterpreter (Handbuch für Anfänger/Administratoren), Axians ICT Austria 2024 | PDF, **76 S.** (gedr. -1- bis -71-, Offset +5) | [01], [02], [03], [04], [05], [11] |
+| **T102-UE** | T102 – Logikinterpreter, Übungen | PDF, **51 S.** (gedr. -1- bis -48-, Offset +3) | [09], [11] (+ Kriteriumssatz-Prioritäten in [02]) |
+| **PROZ-L3** | L3 – LBase Prozessdokumentation V1 (Stand 04.12.2024) | DOCX (Tabelle) | [07] |
+| **SAKT** | Handout zum Start Pilotprojekt „Digitaler Sendungsakt“ (Maik Großhäuser, LMX Salzburg) | PDF, 4 S. | [08], [11] |
+| **BASIS** | Unterlagen für User nach Basis-Schulung (Tipps & Tricks, Funktionstasten, Filter, Beschlagwortung) | PDF, 8 S. | [06], [08], [11] |
+
+> **Hinweis zur PDF-Verarbeitung:** PDFs werden zur Analyse mit **PyMuPDF** seitenweise zu
+> Bildern gerendert und **visuell** ausgewertet (Screenshots/Masken/Modulcode) – nicht nur
+> als Text. Dadurch sind **seitengenaue Referenzen inkl. Abbildungshinweisen** möglich (→ [11]).
+> Die anfangs vom System gemeldeten Seitenzahlen (46/13) waren zu niedrig; maßgeblich sind
+> die oben genannten **physischen Seitenzahlen**.
 
 ## Noch offen / angekündigt
 

@@ -5,6 +5,10 @@
 Quelle: **T102 Logikinterpreter – Übungen**. Sammlung typischer Aufgabenstellungen mit den
 jeweils genutzten Formaten – als **Muster/Rezepte** für „Wie baue ich so etwas?“.
 
+> 📄 Die exakte PDF-/gedruckte Seite je Beispiel (inkl. der 🖼 Ergebnis-Screenshots) steht in
+> [11 Seitenreferenzen](11_seitenreferenzen.md). Die Beispiel-Codes A1–E2 unten tragen dort
+> dieselben Kürzel. Offset Übungsheft: **PDF-Seite = gedruckt + 3**.
+
 ## A) Sendungsvorgaben (Bibliothek *Sendungs-Vorgabe*, [F4])
 
 Auslöser: **[Vorgabemodul]** bzw. **[F4]** in der Sendungserfassung. Kriteriumssatz-Suche

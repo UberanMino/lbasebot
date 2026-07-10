@@ -25,7 +25,13 @@ werden in die passenden Bausteine eingearbeitet und in `quellen/` protokolliert.
 | 08 | `08_digitaler-sendungsakt.md` | E-Akt / EPaper: Dokumente auf Sendung/Fahrt/Adresse archivieren | Handout Sendungsakt + Basis-Schulung |
 | 09 | `09_uebungen-rezepte.md` | Praxis-Rezepte aus den Übungen (Vorgabe, Prüfung, Abrechnung, Fahrten) | T102 Übungen |
 | 10 | `10_glossar.md` | Glossar aller Begriffe & Abkürzungen | alle |
+| 11 | `11_seitenreferenzen.md` | **Seiten- & Abbildungsindex** (PDF-Seite ↔ gedruckte Seite ↔ Screenshot-Guide) | T102-HB/UE, BASIS, SAKT |
 | — | `quellen/README.md` | Quellenverzeichnis + Änderungsprotokoll | — |
+
+> **Seitengenau nachschlagen:** Zu (fast) jeder Aussage gibt es in [11](11_seitenreferenzen.md)
+> die exakte **PDF-Seite** und die **gedruckte Seitenzahl**, plus Hinweis „🖼“ auf die
+> Seiten mit **visuellen Guides** (Screenshots von Masken, Ribbon-Buttons, Modulcode).
+> Offset-Merker: T102-Handbuch **PDF-Seite = gedruckt + 5**, Übungen **+ 3**.
 
 ---
 
@@ -96,6 +102,7 @@ werden in die passenden Bausteine eingearbeitet und in `quellen/` protokolliert.
 - **„Wie speichere ich einen POD/Beleg zur Sendung?“** → [08](08_digitaler-sendungsakt.md)
 - **„Wie baue ich konkret ein Vorgabe-/Prüf-/Abrechnungs-/Fahrtmodul?“** → [09](09_uebungen-rezepte.md)
 - **„Was heißt Abkürzung X?“** → [10](10_glossar.md)
+- **„Auf welcher Seite steht das? Wo ist der Screenshot dazu?“** → [11](11_seitenreferenzen.md)
 
 ---
 
