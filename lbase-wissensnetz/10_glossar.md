@@ -78,6 +78,43 @@ Siehe ausführlich [08]:
 - **Betreff-Kürzel (Auswahl):** POD, LMS, LDL, ER, AR, GFG, ZOL, LDA, FRB, MES, UMZ, PIC,
   DOK, FIM, SVB, ANG, KUD, KOR.
 
+## LBase 21st & LOGBATT (Batch 2)
+
+| Begriff | Bedeutung |
+|---|---|
+| **LBase 21st** | Aktuelle Systemgeneration bei Lagermax/LogBATT (→ [12]) |
+| **LIM** | Logikinterpreter-Modul – geführte Sendungserfassung per Dialog (→ [13]) |
+| **GenTab** | Generische Tabelle zur Verhaltenssteuerung durch Key-User/IT (→ [13]) |
+| **Wertebereich** | Zulässige-Werte-Liste, z. B. `X_LOGB_BER`, `X_LBATT_EINH` (→ [13]/[14]) |
+| **Komponente** | Übertragungs-/Zuordnungseinheit, z. B. `Cust_LOGBATT`, `Cust_LMX` (→ [13]) |
+| **TPV** | Transportvariante (Sendungs-Pflichtfeld, z. B. FTL/LTL/FCL) (→ [12]) |
+| **Kostenstelle** | In 21st das Feld, das die **alten „Relationen“** ersetzt (→ [12]) |
+| **Verkehr(styp)** | INA/EUA/EXP/LAD… (→ [12]) |
+| **Frankatur/INCOTERM** | numerischer Code der Abrechnungsart, z. B. 900 Frei Haus (→ [12]) |
+| **Fahrttyp** | Eigen-/Partner-/Charterfuhrpark, Interne Fahrt, Verteilung (→ [12]) |
+| **FSW** | Fahrtstatuswechsel: in Vorbereitung → auf Fahrt → in Kontrolle → abgeschlossen (→ [12]) |
+| **EV / Eingangsvorschau** | erwartete Kosten je Fahrt, später mit Beleg abgeglichen (→ [12]/[16]) |
+| **DFÜ** | Datenfernübertragung (wird bei FSW „auf Fahrt“ ausgelöst) (→ [12]) |
+| **CMR** | Internationaler Frachtbrief (1:1 aus Sendung) (→ [12]) |
+| **Sendungsowner** | Eigentümer der Sendung, rechnet Leistungen ab (→ [12]) |
+| **Sammelfaktura** | Sammelrechnung über mehrere Sendungen (Kennzeichen S/M/L + Trennkennz.) (→ [16]) |
+| **AZA / Anzeigenart** | Auswertungs-/Anzeigeform, z. B. „LogBATT Sendungsauswertung“ (→ [16]) |
+| **Kondition** | Preis-/Abrechnungsregelwerk; „PLO – allgemeine Kondition“ = LOGBATT-Start (→ [14]) |
+| **Spesenblock (SPB)** | Modulblock der Abrechnung, z. B. LOGBATT_SDG_BESCH_DATEN (→ [14]) |
+| **Berechnungs-Element** | LOGBATT-Abrechnungsbaustein (X_LOGB_BER), z. B. TRANS, VERP, RECYC (→ [14]) |
+| **Stammdaten-Matrix** | Preis-Matrix `PLO_<Adr>_<RV>_<Element>` (→ [14]) |
+| **RV / Rahmenvertrag** | Kundenvertrag mit hinterlegten Konditionen/Preisen (→ [14]/[16]) |
+| **Einmalangebot** | Abrechnung ohne RV (Stückpreis per Dialog anpassbar) (→ [14]) |
+| **VEPID** | Verpackungs-/Behälter-ID (z. B. TRO Trockeneis, HEBGE Hegegestell, VERMI) (→ [14]) |
+| **ORGID / AG_ID / ADRID** | Organisations-/Arbeitsgruppen-/Adress-ID (→ [12]/[13]) |
+| **DBI** | Deckungsbeitrag I (Tagespreis-Berechnung) (→ [15]) |
+| **ZO / SV (Zoll)** | Zollgut / Selbstverzoller (Sperrgründe) (→ [15]) |
+
+## GenTab-Kürzel (Schnellindex → [13])
+LMX_SDG_VAR (Pflichtfelder) · LMX_STD_VAR · LMX_SDG_LIM · LMX_SDG_AUTO · LMX_FAR_AUTO ·
+LMX_FAR_SDGA · LMX_FAR_DR · LMX_SDG_DR · LMX_SOT_VKM · LMX_SCANNER · LMX_ZOLLDIEN ·
+LMX_LBATT_KO · LMX_LBATT_TX.
+
 ## Codierungen zum Nachschlagen
 
 - **Wochentage (Zeitberechnung Wochentag):** 1=So, 2=Mo, 3=Di, 4=Mi, 5=Do, 6=Fr, 7=Sa. ([04])

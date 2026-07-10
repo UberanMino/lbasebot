@@ -25,8 +25,18 @@ werden in die passenden Bausteine eingearbeitet und in `quellen/` protokolliert.
 | 08 | `08_digitaler-sendungsakt.md` | E-Akt / EPaper: Dokumente auf Sendung/Fahrt/Adresse archivieren | Handout Sendungsakt + Basis-Schulung |
 | 09 | `09_uebungen-rezepte.md` | Praxis-Rezepte aus den Übungen (Vorgabe, Prüfung, Abrechnung, Fahrten) | T102 Übungen |
 | 10 | `10_glossar.md` | Glossar aller Begriffe & Abkürzungen | alle |
-| 11 | `11_seitenreferenzen.md` | **Seiten- & Abbildungsindex** (PDF-Seite ↔ gedruckte Seite ↔ Screenshot-Guide) | T102-HB/UE, BASIS, SAKT |
+| 11 | `11_seitenreferenzen.md` | **Seiten- & Abbildungsindex** (PDF-Seite ↔ gedruckte Seite ↔ Screenshot-Guide) | T102-HB/UE, BASIS, SAKT, 21st |
+| 12 | `12_lbase-21st-bedienung.md` | **LBase 21st** (aktuelles System): Sendung/Fahrt/LA/Dispo, Codes, FSW-Workflows, CMR, Belege, TrackTrace | 21st Allgemein |
+| 13 | `13_lim-und-gentabs.md` | **LIM** (geführte Erfassung) + **GenTab-Register** (Steuerung) | 21st, Kondition |
+| 14 | `14_logbatt-abrechnung-konditionen.md` | **LOGBATT-Abrechnungslogik** (Module, Matrix-Konvention, Berechnungs-Elemente) | Kondition |
+| 15 | `15_niederlassungsspezifisch.md` | Standort-Abläufe: Plochingen (LOGBATT), SENEC (Zoll), Salzburg-Timesped | 21st NL |
+| 16 | `16_aktueller-prozess-handbuch.md` | **Aktueller LogBATT-Prozess** (Stand 2025): Vertrieb→Dispo→Abrechnung, Sammelfaktura, T&T | Einführung + Prozessschritte |
 | — | `quellen/README.md` | Quellenverzeichnis + Änderungsprotokoll | — |
+
+> **Zwei Ebenen im Netz:** [01]–[05]/[09] beschreiben den **generischen Logikinterpreter
+> (T102)** – das zeitlose Programmier-Fundament. [12]–[16] beschreiben **LBase 21st**, das
+> **real bei LogBATT/Lagermax eingesetzte System** (LIM, GenTabs, konkrete Codes & Prozesse).
+> Terminologie-Brücke: *Relation (T102) → Kostenstelle (21st)*; *LIM* = geführte Sendungserfassung.
 
 > **Seitengenau nachschlagen:** Zu (fast) jeder Aussage gibt es in [11](11_seitenreferenzen.md)
 > die exakte **PDF-Seite** und die **gedruckte Seitenzahl**, plus Hinweis „🖼“ auf die
@@ -103,6 +113,11 @@ werden in die passenden Bausteine eingearbeitet und in `quellen/` protokolliert.
 - **„Wie baue ich konkret ein Vorgabe-/Prüf-/Abrechnungs-/Fahrtmodul?“** → [09](09_uebungen-rezepte.md)
 - **„Was heißt Abkürzung X?“** → [10](10_glossar.md)
 - **„Auf welcher Seite steht das? Wo ist der Screenshot dazu?“** → [11](11_seitenreferenzen.md)
+- **„Wie erfasse ich eine Sendung/Fahrt im echten System? Welcher Verkehrs-/Frankatur-Code?“** → [12](12_lbase-21st-bedienung.md)
+- **„Was ist ein LIM? Welche GenTab steuert X?“** → [13](13_lim-und-gentabs.md)
+- **„Wie rechnet LogBATT ab? Was bedeutet Element TRANS_KMV / Matrix PLO_…?“** → [14](14_logbatt-abrechnung-konditionen.md)
+- **„Wie läuft Plochingen-Batterie / SENEC-Zoll / Salzburg-LIM?“** → [15](15_niederlassungsspezifisch.md)
+- **„Wie ist der aktuelle Gesamtprozess (Angebot→Abrechnung, Sammelfaktura, Track&Trace)?“** → [16](16_aktueller-prozess-handbuch.md)
 
 ---
 

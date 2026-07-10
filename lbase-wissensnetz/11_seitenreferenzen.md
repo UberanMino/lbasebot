@@ -142,3 +142,69 @@ auf die **visuellen Guides** (Screenshots/Masken/Modulcode), die dort als Anleit
 
 Reine Tabelle (DOCX), keine Seitenbilder. Schritte **I–XIX** vollständig in [07] übernommen
 (Stand 04.12.2024).
+
+---
+
+## Batch 2 – LBase 21st & LOGBATT
+
+> Bei den 21st-PDFs gilt: **PDF-Seite = gedruckte „Seite N von …“** (kein Offset).
+> PPTX werden per **Foliennummer** zitiert („F<n>“).
+
+### 21ST-ALLG – Handbuch 21st Allgemein (56 S., Version 4, Stand 09/2024) → [12], [13]
+
+| Thema | PDF-S. | 🖼 | Baustein |
+|---|---|---|---|
+| Grundsätze / Erfassungswege (EDI/ePortal/manuell) | 3 | — | [12] |
+| Anmeldung Arbeitsgruppe / Startseite / Arbeitsgruppe ändern | 4–6 | 🖼 | [12] |
+| Filter (Drucker + Auswahl) | 7–9 | 🖼 | [12] |
+| Adresssuche (Kriterien, `%`) | 10–11 | 🖼 | [12] |
+| **Sendungsmaske** (nummerierte Bereiche 1–6, Pflichtfelder gelb) | 14 | 🖼 Maske | [12] |
+| **Verkehr-Codes** | 15 | — | [12] |
+| **TPV / Übernahme-Codes** | 16 | — | [12] |
+| **Weiterleitung-Codes** | 17 | — | [12] |
+| **Frankatur/INCOTERM-Codes** | 18 | — | [12] |
+| **LIM** auswählen & Dialoge | 19–20 | 🖼 | [13] |
+| LIM Adressauswahl / Textadresse / Speichern (GenTab LMX_SDG_VAR) | 21–24 | 🖼 | [13] |
+| Sendungssuche / „finde meine Sendung nicht“ | 25 | 🖼 | [12] |
+| Storno Sendung | 26–27 | 🖼 | [12] |
+| **Fahrt** + autom. Anlage (GenTabs) | 28 | — | [12]/[13] |
+| Fahrtansicht / **Pflichtfelder (Typ, Kostenstelle)** | 30–31 | 🖼 Fahrt-Maske | [12] |
+| Storno Fahrt / **Eingangsvorschau** | 34–35 | 🖼 | [12] |
+| **LA** (Träger, Erfassung Strg+E, Druck) | 36–37 | — | [12] |
+| **Disposition** + **FSW-Workflows** (in Vorb./auf Fahrt/in Kontrolle/abgeschlossen) | 37–40 | 🖼 | [12] |
+| **CMR** | 41–42 | 🖼 | [12] |
+| **Modulaufruf** / TPV-Wechsel | 43–44 | 🖼 | [12] |
+| Scanfortschritt | 45 | 🖼 | [12] |
+| **Belege** (Erfassung, RE-Nr.-Kürzung, Freigabe) | 47–50 | 🖼 | [12] |
+| **Driver App** (LMX_SCANNER/LMX_SOT_VKM) | 51–53 | 🖼 | [12]/[13] |
+| **TrackTrace** (Adresse + Sendung, URL) | 54–55 | 🖼 | [12] |
+| Export / Archivierung (Drag & Drop) | 56 | 🖼 | [12] |
+
+### 21ST-NL – Handbuch 21st Niederlassungsspezifisch (26 S.) → [15]
+
+| Thema | PDF-S. | 🖼 | Baustein |
+|---|---|---|---|
+| **Plochingen** – Hebevorrichtung auf Adresse | 4–5 | 🖼 | [15] |
+| Plochingen – Sendungserfassung LOGBATT (Support-Module) | 6 | — | [15] |
+| Workflow JA (Batteriedatenbank, ENTSORGUNG-Dialoge) | 7–10 | 🖼 MFD Abfalldetails + LI-Auswahl Entsorger | [15] |
+| Workflow NEIN (Boxen manuell vorgeben) | 11–13 | 🖼 | [15] |
+| Plochingen – Verträge/RV anlegen | 14–15 | 🖼 | [15] |
+| **SENEC** – Sendungsfreigabe nach Zoll (ZO/SV, Sperrgrund ZOLL) | 17–22 | 🖼 | [15] |
+| SENEC – Positionserfassung MFD (GenTab LMX_ZOLLDIEN) | 21 | 🖼 | [15] |
+| **Salzburg-Timesped** – LIM Blanko/Bestandskunden (LMX_SDG_LIM) | 24–26 | 🖼 | [15] |
+
+### KONDITION – LOGBATT Abrechnung (DOCX) → [14]
+Fließtext + große Tabelle **X_LOGB_BER** (Berechnungs-Elemente). Kein Seiten-Offset relevant;
+Struktur vollständig in [14]. Kernabschnitte: Abrechnungs-Start, Spesenblöcke
+(LOGBATT_SDG_BESCH_DATEN / _BERECHNUNG_SPC / _SPC_TEXT / _EINMALANGEBOT), Matrix-Konvention
+`PLO_…`, Beispiel RV F3Y9KT1 (BMW 810035000).
+
+### EINF – LBase Einführung (PPTX, 27 Folien) → [16]
+Agenda F2 · Anwendungsbereich F3 · SAP-Rolle F4 · User/Key-User F5–6 · Prozess-Tabelle F7 ·
+„Das ist neu“ Vertrieb F10–15 / Finance F17–20 / Produktion F21 · GoLive F22–23 · Phasen F24–27.
+
+### PROZ-1.7 – LBase Prozessschritte v1.7 (PPTX, 68 Folien, Stand 12.11.2025) → [16]
+Vertrieb F2–11 · Logistik/Angebot F12–25 · Disposition F26–28 · Track & Trace F29–34 ·
+Abrechnung F35–45 · Finance/Buchungsperiode F46–50 · Eingangsvorschau F51–54 · RV F55 ·
+Adressen F56 · Produktion/Hallenscannung F57–58 · Fahrer-App F59 · Key-User F60 ·
+Ticketsystem F61–62 · Matrizen finden F63 · Gruppenauswertung F64–68.

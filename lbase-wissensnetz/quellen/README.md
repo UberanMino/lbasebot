@@ -20,11 +20,32 @@ dokumentiert, damit Aussagen nachvollziehbar bleiben.
 > Die anfangs vom System gemeldeten Seitenzahlen (46/13) waren zu niedrig; maßgeblich sind
 > die oben genannten **physischen Seitenzahlen**.
 
+## Eingearbeitete Quellen – Batch 2 (Stand: 2026-07-10)
+
+| Kürzel | Dokument | Typ | Eingearbeitet in |
+|---|---|---|---|
+| **KONDITION** | KONDITION_LOGBATT – Beschreibung & Anpassungen | DOCX (Text + Tabelle X_LOGB_BER) | [14], [13] |
+| **21ST-ALLG** | Handbuch LMX 21st – Allgemein (Version 4, Stand 09/2024) | PDF, 56 S. (Seite = PDF-Seite) | [12], [13], [11] |
+| **21ST-NL** | Handbuch LMX 21st – Niederlassungsspezifisch | PDF, 26 S. | [15], [13], [11] |
+| **EINF** | LBase_Einführung | PPTX, 27 Folien | [16], [11] |
+| **PROZ-1.7** | LBase_Prozessschritte v1.7 (Stand 12.11.2025) | PPTX, 68 Folien | [16], [11] |
+
+> **Format-Handling Batch 2:** PPTX werden mit **python-pptx** ausgelesen (Text + Tabellen +
+> Notizen) und per **Foliennummer** referenziert; PDF-Seiten der 21st-Handbücher entsprechen
+> 1:1 der gedruckten „Seite N von …“. Wichtige Screenshots visuell geprüft (u. a.
+> 21st-Sendungsmaske, LOGBATT-Entsorgungsdialoge).
+>
+> **Generationen-Hinweis:** Batch 1 = generischer **T102-Logikinterpreter** + älterer Prozess
+> (2024). Batch 2 = **LBase 21st** (real eingesetztes System) + konkrete **LOGBATT-Abrechnung**
+> + aktueller Prozess (2025). Bei Prozess-Widersprüchen gilt der neuere Stand ([16] vor [07]).
+
 ## Noch offen / angekündigt
 
-- **Schulungstranskripte** (folgen laut Nutzer) → werden thematisch in [01]–[09]
+- **Schulungstranskripte** (folgen laut Nutzer) → werden thematisch in [01]–[16]
   eingearbeitet und hier ergänzt.
 - Weitere Handbücher/Anleitungen (Nutzer sendet in Blöcken zu je 5 Dokumenten).
+- **PPTX-Screenshots**: Folien-Bilder konnten in dieser Umgebung nicht gerendert werden
+  (LibreOffice-Profilproblem); Inhalte liegen als extrahierter Text/Foliennummer vor.
 
 ## Konventionen für die Einarbeitung neuer Quellen
 

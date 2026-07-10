@@ -6,6 +6,11 @@ Quelle: **L3 – LBase Prozessdokumentation V1** (Stand 04.12.2024). Beschreibt 
 End-to-End-Ablauf bei **LogBATT GmbH** (Konzern **Lagermax AG**), mit Rollen, Werkzeugen
 und Systemen (**SAP**, **L-Base PROD/DEV/MD-PROD**, **Driver App**, **DocuWare**, Ticketsystem **OTOBO::ITSM**).
 
+> ⚠️ **Aktualität:** Dieser Baustein gibt den Stand **04.12.2024** wieder. Der **neuere**
+> operative Ablauf (Stand **12.11.2025**) steht in [16 Aktueller Prozess](16_aktueller-prozess-handbuch.md)
+> und konkretisiert v. a. Angebot, Track & Trace, Sammelfaktura, Eingangsvorschau,
+> Gruppenauswertung. Bei Abweichungen gilt **[16]**.
+
 ## Systemlandschaft (Kontext)
 
 - **SAP** – führendes System für **Stammdaten** (Kunden, Lieferanten). Übertragung nach
