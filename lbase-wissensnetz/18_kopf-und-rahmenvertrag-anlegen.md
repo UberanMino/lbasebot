@@ -149,59 +149,97 @@ Jede Preisspalte im Preisblatt entspricht einem **Berechnungs-Element `X_LOGB_BE
 > und per 15-Min-Schnittstelle in lBase angekommen sein (→ [16]/[07-I]). ADRID der
 > Rechnungsadresse (`810…`) bereithalten — sie geht in den Matrixnamen ein.
 
+> **Wo arbeitest du?** Anlage auf **L-Base DEV** (Umgebung für RV-/Vertragsanlage, → [07]).
+> Alle Werkzeuge liegen im Ribbon-Reiter **ADMINISTRATION** (Gruppen *Verwaltungstools*,
+> *Generische Tabellen*, *Konfigurationen*) bzw. **ABRECHNUNG** (→ `ANLEITUNG_logik-export.md`).
+
+### Bedienungs-Grundmuster (gilt für alle GenTab-Schritte)
+lBase-Masken werden **immer gleich** bedient — diese Tasten brauchst du durchgängig (→ [06]):
+
+| Taste | Funktion | | Taste | Funktion |
+|---|---|---|---|---|
+| **F5** | Suchen (in ein Feld klicken → F5 = Auswahlliste) | | **F8** | **Neu** (neuer Datensatz/Zeile) |
+| **F6** | Anzeigen (nur lesen) | | **F7** | **Ändern** |
+| **F12** | **Speichern** | | **F10** | Fertig |
+| **ESC** | Abbrechen | | **F2 / F3** | zurück-/weiterblättern |
+
+- **Datum** schnell: `SPACE` = heute, `31 12` = 31.12. akt. Jahr, `+30` = heute+30 Tage (→ [06]).
+- **Suchen** mit Platzhaltern: `%` (mehrere Zeichen), `?` (ein Zeichen) — z. B. `PLO_%JUNG%`.
+- **Kopieren statt neu tippen:** bestehenden Datensatz **anzeigen → „Datensatz kopieren"** →
+  anpassen → speichern (dokumentiert für Abrechnungs-LA in [16]; gleiches Prinzip bei Matrizen).
+
 ### Schritt 1 – Vorlage vervollständigen
 Die Intake-Vorlage „Vorlage_neuer Rahmenvertrag" (= `Preisliste_Jungheinrich.xlsx`) füllen:
 Abschnitt 1–3 (Kunde / Kopfvertrag / Rahmenvertrag) **vollständig**, Preisblatt beilegen.
 Übergabe an **FiBu** (vergibt SAP-Projektnr.) / Anlage durch Key-User.
 
 ### Schritt 2 – Kopfvertrag in `LMX_LB_KV` anlegen
-1. In lBase **DEV** die GenTab **`LMX_LB_KV`** öffnen (GenTab-Pflege, → [13]).
-2. Neue Zeile: **Kunde/ADRID Jungheinrich**, **Kopfvertragsnr./Einkaufsbeschluss**,
-   **Volumen (€)**, **Laufzeit von/bis** (bis **31.12.2026**).
-3. Speichern. Der KV ist die Klammer für die darunter liegenden Abrufe.
+1. Ribbon **ADMINISTRATION → Generische Tabellen → Daten** (⚠️ **„Daten"**, nicht „Definition" —
+   sonst siehst du nur die Tabellenliste statt der Inhalte, → `ANLEITUNG_logik-export.md` B).
+2. In der Tabellenauswahl **`LMX_LB_KV`** wählen/filtern → Inhalt (bestehende Kopfverträge) wird
+   angezeigt.
+3. **[F8] Neu** → leere Zeile. Felder füllen (Feld anklicken, bei Auswahlfeldern **[F5]**):
+   **Kunde/ADRID Jungheinrich (10988 / `810…`)**, **Kopfvertragsnr./Einkaufsbeschluss**,
+   **Volumen (€)**, **Laufzeit von** / **bis 31.12.2026** (Datum: `31 12` tippen).
+4. **[F12] Speichern**. Der KV ist jetzt die Klammer für die Abrufe darunter.
+
+> Tipp: Gibt es schon einen KV eines ähnlichen Kunden → diesen **anzeigen → „Datensatz kopieren"**
+> und nur Kunde/Nummern/Volumen ändern. Die **exakten Spaltennamen** siehst du direkt in der
+> Tabelle; falls unklar, welche Spalte was ist, einmal mit der IT abgleichen (→ [13]).
 
 ### Schritt 3 – Rahmenvertrag in `LMX_LB_RV` anlegen
-1. GenTab **`LMX_LB_RV`** öffnen.
-2. Neue Zeile: **RV-/Abrufnummer**, **Verweis auf den KV** aus Schritt 2, **Kundenreferenz/
-   Abrufbestellnr.**, **Volumen Abruf (€)**, **Laufzeit** (≤ KV), **Rechnungsadresse (ADRID)**.
-3. Diese **RV-Nummer** ist der Wert, der später **in der Sendung** gesetzt wird und die
-   Preisfindung auslöst — sauber dokumentieren.
+1. Gleicher Weg: **ADMINISTRATION → Generische Tabellen → Daten → `LMX_LB_RV`**.
+2. **[F8] Neu** → Felder füllen: **RV-/Abrufnummer**, **Verweis auf den KV** aus Schritt 2,
+   **Kundenreferenz/Abrufbestellnr.**, **Volumen Abruf (€)**, **Laufzeit** (≤ KV),
+   **Rechnungsadresse (ADRID)**. **[F12]**.
+3. Diese **RV-Nummer** notieren — sie wird später **in der Sendung** gesetzt und löst die
+   Preisfindung aus (kein RV → Einmalangebot).
 
 ### Schritt 4 – abzurechnende Elemente in `LMX_LBATT_KO`
-Zeile für **Rechnungsadresse (`LAF_ADRID`) + RV** anlegen und die **Berechnungs-Elemente**
-eintragen, die für Jungheinrich gelten (aus dem Mapping oben): **TRANS, BEHG, VERW, VERL, RECYC,
-STAPAB, WARTE, ggf. MAUT** (→ [14], Schritt 5). Fehlt ein Element im Wertebereich `X_LOGB_BER`
-→ erst dort anlegen und `Cust_LOGBATT` zuordnen (→ [14]/[13]).
+1. **ADMINISTRATION → Generische Tabellen → Daten → `LMX_LBATT_KO`**.
+2. **[F8] Neu** → Zeile für **Rechnungsadresse (`LAF_ADRID`) + RV** und die **Elemente**
+   eintragen, die für Jungheinrich gelten: **TRANS, BEHG, VERW, VERL, RECYC, STAPAB, WARTE,
+   ggf. MAUT** → **[F12]** (→ [14], Schritt 5).
+3. **Element fehlt im Katalog?** → erst im Wertebereich anlegen:
+   **ADMINISTRATION → Verwaltungstools → Wertebereiche → `X_LOGB_BER` → [Bereichsview]** →
+   neuen Wert + Bezeichnung + Komponente **`Cust_LOGBATT`** (→ `ANLEITUNG_logik-export.md` C).
 
 ### Schritt 5 – Texte in `LMX_LBATT_TX`
-Je Element den **Rechnungstext + Einheit** hinterlegen (€/Tag, €/kg, €/Beauftragung,
-Pauschal). Kommt ein Text nur einmal vor → keine Bedingung. Werden je Parameter unterschiedliche
-Texte gebraucht (z. B. Behältergröße L/XL, Chemie NMC/LTO/LFP, sicher/unsicher) → **Bedingung
-exakt** hinterlegen, bestehende Einträge als Vorlage (→ [14], Schritt 6). Sprache beim RV kommt
-aus dieser Tabelle.
+1. **ADMINISTRATION → Generische Tabellen → Daten → `LMX_LBATT_TX`**.
+2. **[F8] Neu** → je Element **Rechnungstext + Einheit** (€/Tag, €/kg, €/Beauftragung, Pauschal),
+   **[F12]**. Kommt ein Text nur einmal vor → keine Bedingung. Braucht ein Element je Parameter
+   unterschiedliche Texte (Behältergröße L/XL, Chemie NMC/LTO/LFP, sicher/unsicher) →
+   **Bedingung exakt** eintragen; bestehenden Eintrag als Vorlage nehmen (→ [14], Schritt 6).
+   Sprache beim RV kommt aus dieser Tabelle.
 
 ### Schritt 6 – Preis-Matrizen `PLO_<Adr>_<RV>_<Element>`
-Für jedes Element eine **Stammdaten-Matrix** anlegen — Bezeichnung **exakt** nach Konvention
-(→ [14], „kritisch!"):
-
-```
-PLO_<ADRID Rechnungsempfänger>_<RV-Nummer>_<Element>
-z. B.  PLO_<JungheinrichADRID>_<RV>_TRANS
-       PLO_<JungheinrichADRID>_<RV>_BEHG
-       PLO_<JungheinrichADRID>_<RV>_RECYC   …
-```
-- Preise aus Abschnitt 3 oben eintragen; **TRANS** je Standort, **BEHG/RECYC** je Größe/Chemie/
-  Zustand als X-/Y-Variable, alles Übrige als Konstante.
-- Jede neue Matrix auf Komponente **`Cust_LOGBATT`** zuordnen.
-- **Effizient:** bestehenden RV mit ähnlicher Logik als Vorlage **kopieren** und nur die
-  abweichenden (v. a. TRANS-)Werte überschreiben.
+1. Ribbon **ABRECHNUNG → Abrechnung mit Konditionen → Stammdaten-Matrix**
+   (→ `ANLEITUNG_logik-export.md` D).
+2. Anzeigeart **„MD Matrix – Standard"**. **Zuerst eine passende bestehende Matrix suchen**
+   (`PLO_%…` mit **[F5]** / `%`-Platzhalter) — z. B. dieselbe Element-Matrix eines anderen RV.
+3. Diese Matrix **anzeigen → „Datensatz kopieren"** → **umbenennen exakt nach Konvention**
+   (→ [14], „kritisch!"):
+   ```
+   PLO_<ADRID Rechnungsempfänger>_<RV-Nummer>_<Element>
+   z. B.  PLO_<JungheinrichADRID>_<RV>_TRANS
+          PLO_<JungheinrichADRID>_<RV>_BEHG
+          PLO_<JungheinrichADRID>_<RV>_RECYC   …
+   ```
+4. **Preise aus Abschnitt 3 eintragen** → **[F12]**. **TRANS** je Standort, **BEHG/RECYC** je
+   Größe/Chemie/Zustand über die X-/Y-Variable, alles Übrige als Konstante. **Weil fast alles
+   gleich ist:** meist nur die **TRANS-Werte** ändern, Rest bleibt aus der Kopiervorlage stehen.
+5. Jede **neue Matrix** auf Komponente **`Cust_LOGBATT`** zuordnen (sonst wird sie nicht
+   übertragen/gefunden).
 
 ### Schritt 7 – Übertragen & testen
-1. Geänderte Module/GenTabs/Matrizen über **`Cust_LOGBATT`** von DEV übertragen (→ [14]/[13]).
-2. **Test:** Testsendung mit gesetztem **RV** anlegen (LIM, → [13]) → **LA-Übersicht →
-   „LA ausführen"** (→ [16]) → prüfen, ob alle Elemente mit den Preisen aus dem Preisblatt
-   ziehen. Bei „keine Preise" → Matrixbezeichnung Zeichen für Zeichen prüfen (häufigster Fehler).
-3. Freigabe → auf **PROD**.
+1. Geänderte GenTabs/Matrizen (und ggf. Module) über die Komponente **`Cust_LOGBATT`** von
+   **DEV → PROD** übertragen (→ [14]/[13]).
+2. **Testsendung** mit gesetztem **RV** anlegen (über LIM, Feld **LIM → [F5]**, → [13]) →
+   **LA-Übersicht** (**Strg+U**) → **Kalkulation → „LA ausführen"** (→ [16]) → prüfen, ob alle
+   Elemente mit den Preisen aus dem Preisblatt ziehen.
+3. **Kommt „kein Preis"** → fast immer **Matrixbezeichnung** falsch: `PLO_<Adr>_<RV>_<Element>`
+   **Zeichen für Zeichen** gegen ADRID/RV/Element prüfen (häufigster Fehler, → [14]).
+4. Passt alles → Freigabe auf **PROD**.
 
 ---
 
