@@ -179,6 +179,19 @@ Jede Preisspalte im Preisblatt entspricht einem **Berechnungs-Element `X_LOGB_BE
 > Alle Werkzeuge liegen im Ribbon-Reiter **ADMINISTRATION** (Gruppen *Verwaltungstools*,
 > *Generische Tabellen*, *Konfigurationen*) bzw. **ABRECHNUNG** (→ `ANLEITUNG_logik-export.md`).
 
+> ### 🔁 Sonderfall: KV/RV existieren **schon** → nicht neu anlegen
+> Ist für den Kunden bereits ein KV **und** RV vorhanden, **Schritt 2–3 überspringen** — sonst
+> entsteht ein **Duplikat/Kollision** (keine Preise). Stattdessen:
+> 1. **Identifizieren:** RV markieren → **[F6] Anzeigen** → **RV-Nummer/Bezeichnung** (`Jungheinrich_OHNE`?),
+>    **ADRID**, **Laufzeit**, **Volumen**, Verweis auf KV notieren. Diese RV-Bezeichnung ist der
+>    Schlüssel für die Matrizen.
+> 2. **Passt er** (ADRID/Laufzeit/Volumen stimmen) → **weiterverwenden**; nur veraltete Felder per
+>    **[F7] Ändern** korrigieren. *Echter Altvertrag zum Ablösen* → mit Key-User klären (neuer RV,
+>    alte Nr. ins Feld „Bisherige RV-Nummer") — **kein** Duplikat danebenstellen.
+> 3. **Weiter mit Schritt 4–6 im Prüf-Modus:** existiert schon → nur **Fehlendes ergänzen** bzw.
+>    **abweichende Preise** ändern ([F7]); dank „meiste Preise identisch" v. a. **TRANS** + Behälter-/
+>    Entsorgungsstaffel gegen das Preisblatt abgleichen. Dann **Schritt 7 (testen)**.
+
 ### Bedienungs-Grundmuster (gilt für alle GenTab-Schritte)
 lBase-Masken werden **immer gleich** bedient — diese Tasten brauchst du durchgängig (→ [06]):
 
