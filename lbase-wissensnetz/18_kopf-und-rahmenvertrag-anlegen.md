@@ -65,26 +65,31 @@ Aus der Vorlage `Preisliste_Jungheinrich.xlsx` (= „Vorlage_neuer Rahmenvertrag
 | Laufzeit von / bis | *(eintragen; ≤ KV-Laufzeit)* |
 | Bisherige RV-Nummer | *(nur bei bestehendem RV; bei **Neuanlage leer**)* |
 
-> ### ⚠️ Das Dialogfeld „Vertragsnummer erfassen" – **nicht einfach ausdenken**
-> Beim Anlegen fragt das Vertragsmodul eine **Vertragsnummer** ab (kein Auto-Wert → **ihr vergebt
-> sie nach Schema**). Dieser Wert ist der **permanente Schlüssel**: er geht in den **Matrixnamen**
-> `PLO_<Adr>_<RV>_<Element>` **und** später **in jede Sendung** (Feld RV). Falsch/willkürlich =
-> **keine Preise** oder **Kollision** mit bestehendem Vertrag; nachträglich kaum änderbar. Er muss
-> **eindeutig** sein **und dem Hausschema folgen**. Woher der richtige Wert kommt:
+> ### Das Dialogfeld „Vertragsnummer erfassen" – Schema `Kundenname_OHNE`
+> Beim Anlegen fragt das Vertragsmodul eine **Vertragsnummer** ab (kein Auto-Wert). **Gibt es
+> keine offizielle Nummer** (kein Einkaufsbeschluss/kein Alt-RV, wie bei **Jungheinrich**), wird
+> **eine nach Hausschema vergeben** — bestätigt vom Key-User (Lisa H.):
 >
-> - **Kopfvertrag:** Vertragsnummer = **`Kopfvertragsnr./Einkaufsbeschluss`** aus Abschnitt 2 –
->   kommt vom **Kunden/Einkauf** (Jungheinrich), nicht erfunden. Fehlt sie → Vertrieb/FiBu fragen.
-> - **Rahmenvertrag:** interne **L-Base-/Axians-RV-ID** (Format wie BMWs `F41946L`, → [14]).
->   **Muster + freie Nummer finden** über bestehende RV: **„Adressen" + Filter** (RV-Stand, → [16]),
->   GenTab **`LMX_LB_RV`** (Generische Tabellen → Daten) oder bestehende **`PLO_…`-Matrizen** –
->   am einfachsten **einen bestehenden RV kopieren** und hochzählen.
+> ```
+> Schema:  Kundenname_OHNE      →   Jungheinrich:  Jungheinrich_OHNE
+> ```
+> („_OHNE" = *ohne* offizielle Vertrags-/Einkaufsbeschlussnummer.)
+>
+> Dieser Wert ist der **permanente Schlüssel** und muss **überall zeichengenau identisch** stehen:
+> im Vertragsdialog, im **Matrixnamen** `PLO_<Adr>_<RV>_<Element>`
+> (also `PLO_<JungheinrichADRID>_Jungheinrich_OHNE_<Element>`) **und** später **in jeder Sendung**
+> (Feld RV). Tippfehler/andere Schreibweise = **keine Preise**. Da die RV-Bezeichnung selbst schon
+> `_` enthält, an einer **bestehenden `Kundenname_OHNE`-Matrix** abschauen, wie der Matrixname
+> zusammengesetzt wird; **Groß-/Kleinschreibung** und ob **KV und RV denselben Wert** bekommen,
+> kurz mit dem Key-User bestätigen.
+>
+> **Wenn es doch eine offizielle Nummer gibt:** Kopfvertrag → **`Kopfvertragsnr./Einkaufsbeschluss`**
+> (Abschnitt 2, vom Kunden/Einkauf); Rahmenvertrag → bestehende interne RV-ID (Format wie BMWs
+> `F41946L`, → [14]; Muster über „Adressen"+Filter [16] / GenTab `LMX_LB_RV` / `PLO_…`-Matrizen).
 >
 > **Nicht verwechseln:** **Kundenreferenz-/Abrufbestellnr.** = Nummer, die *Jungheinrich* aus
 > seiner Bestellung mitgibt (eigenes Feld); **Bisherige RV-Nummer** = nur beim Ablösen eines
 > alten RV, bei Neuanlage **leer**. Steht **nicht im Preisblatt**.
->
-> 👉 Vor dem Speichern **mit FiBu/IT** (bzw. wer die Axians-Vertragsnummern vergibt) abklären, ob
-> die Nummer frei im Schema wählbar ist oder von einer Stelle vergeben wird.
 
 > ⚠️ Die **exakten Spaltennamen** in den GenTabs `LMX_LB_KV`/`LMX_LB_RV` liegen im Wissensnetz
 > nur als Definition, nicht als Zeilenlayout vor (→ [13]). Die **Felder oben** entsprechen der
@@ -284,8 +289,8 @@ Abschnitt 1–3 (Kunde / Kopfvertrag / Rahmenvertrag) **vollständig**, Preisbla
 ---
 
 ## 6. Offen / mit IT bzw. FiBu klären
-- **RV-Nummernvergabe:** vergibt das Vertragsmodul die interne RV-Nummer **automatisch**, oder
-  wird sie nach eigenem Schema gesetzt? (steht in keiner der Quelldateien – s. Kasten in §2).
+- **RV-/KV-Nummer** ✅ *geklärt (Key-User):* fehlt eine offizielle Nummer, Schema **`Kundenname_OHNE`**
+  → **`Jungheinrich_OHNE`** (s. Kasten in §2). Rest-Detail: Schreibweise + ob KV/RV identisch.
 - **Genaue Bezeichnung der Vertragsarten** im Modul „Verträge/Projekte anlegen" (welcher Eintrag
   = Kopfvertrag, welcher = Rahmenvertrag/Abruf, → [15] S.14–15).
 - Ob **Behälter (L/XL)** und **Entsorgung (NMC/LTO/LFP, sicher/unsicher)** je eine Matrix mit
