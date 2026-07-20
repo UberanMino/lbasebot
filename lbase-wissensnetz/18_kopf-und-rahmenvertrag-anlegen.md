@@ -65,18 +65,26 @@ Aus der Vorlage `Preisliste_Jungheinrich.xlsx` (= „Vorlage_neuer Rahmenvertrag
 | Laufzeit von / bis | *(eintragen; ≤ KV-Laufzeit)* |
 | Bisherige RV-Nummer | *(nur bei bestehendem RV; bei **Neuanlage leer**)* |
 
-> ### ⚠️ Woher kommt die **RV-Nummer**? (häufige Verwechslung)
-> Die eigentliche **Rahmenvertragsnummer ist eine interne L-Base-/Axians-Vertrags-ID**
-> (Format wie BMWs `F41946L`, → [14]) und **entsteht bei der Anlage im Vertragsmodul** – sie
-> steht **weder im Preisblatt noch in der Kundenbestellung**. Nicht verwechseln mit:
-> - **Kundenreferenz-/Abrufbestellnr.** = die Nummer, die *Jungheinrich* aus seiner Bestellung
->   mitgibt (eigenes Formularfeld),
-> - **Bisherige RV-Nummer** = nur relevant, wenn ein *alter* RV abgelöst wird → bei Neuanlage leer.
+> ### ⚠️ Das Dialogfeld „Vertragsnummer erfassen" – **nicht einfach ausdenken**
+> Beim Anlegen fragt das Vertragsmodul eine **Vertragsnummer** ab (kein Auto-Wert → **ihr vergebt
+> sie nach Schema**). Dieser Wert ist der **permanente Schlüssel**: er geht in den **Matrixnamen**
+> `PLO_<Adr>_<RV>_<Element>` **und** später **in jede Sendung** (Feld RV). Falsch/willkürlich =
+> **keine Preise** oder **Kollision** mit bestehendem Vertrag; nachträglich kaum änderbar. Er muss
+> **eindeutig** sein **und dem Hausschema folgen**. Woher der richtige Wert kommt:
 >
-> Diese **RV-Nummer musst du danach 1:1** verwenden: im **Matrixnamen** `PLO_<Adr>_<RV>_<Element>`
-> **und** später **in der Sendung** (Feld RV) – sonst zieht die Abrechnung keine Preise. Ob die
-> Nummer automatisch vergeben wird oder nach eigenem Schema, ist der einzige Punkt, den du kurz
-> mit **FiBu/IT** klären solltest.
+> - **Kopfvertrag:** Vertragsnummer = **`Kopfvertragsnr./Einkaufsbeschluss`** aus Abschnitt 2 –
+>   kommt vom **Kunden/Einkauf** (Jungheinrich), nicht erfunden. Fehlt sie → Vertrieb/FiBu fragen.
+> - **Rahmenvertrag:** interne **L-Base-/Axians-RV-ID** (Format wie BMWs `F41946L`, → [14]).
+>   **Muster + freie Nummer finden** über bestehende RV: **„Adressen" + Filter** (RV-Stand, → [16]),
+>   GenTab **`LMX_LB_RV`** (Generische Tabellen → Daten) oder bestehende **`PLO_…`-Matrizen** –
+>   am einfachsten **einen bestehenden RV kopieren** und hochzählen.
+>
+> **Nicht verwechseln:** **Kundenreferenz-/Abrufbestellnr.** = Nummer, die *Jungheinrich* aus
+> seiner Bestellung mitgibt (eigenes Feld); **Bisherige RV-Nummer** = nur beim Ablösen eines
+> alten RV, bei Neuanlage **leer**. Steht **nicht im Preisblatt**.
+>
+> 👉 Vor dem Speichern **mit FiBu/IT** (bzw. wer die Axians-Vertragsnummern vergibt) abklären, ob
+> die Nummer frei im Schema wählbar ist oder von einer Stelle vergeben wird.
 
 > ⚠️ Die **exakten Spaltennamen** in den GenTabs `LMX_LB_KV`/`LMX_LB_RV` liegen im Wissensnetz
 > nur als Definition, nicht als Zeilenlayout vor (→ [13]). Die **Felder oben** entsprechen der
