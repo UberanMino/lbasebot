@@ -1,6 +1,6 @@
 # 18 – Kopfvertrag & Rahmenvertrag in lBase anlegen (LOGBATT)
 
-← [Index](00_INDEX.md) · verwandt: [14 LOGBATT Abrechnung & Konditionen](14_logbatt-abrechnung-konditionen.md) · [13 GenTabs](13_lim-und-gentabs.md) · [16 Aktueller Prozess](16_aktueller-prozess-handbuch.md) · [07 Prozess L3, Schritt III](07_prozesse-logbatt.md)
+← [Index](00_INDEX.md) · verwandt: [14 LOGBATT Abrechnung & Konditionen](14_logbatt-abrechnung-konditionen.md) · [13 GenTabs](13_lim-und-gentabs.md) · [15 Niederlassungen – Verträge anlegen (S.14–15)](15_niederlassungsspezifisch.md) · [16 Aktueller Prozess](16_aktueller-prozess-handbuch.md) · [07 Prozess L3, Schritt III](07_prozesse-logbatt.md)
 
 Quellen: GenTab-Definition `LMX_LB_KV` / `LMX_LB_RV` (→ [13]), Abrechnungslogik (→ [14]),
 Prozessschritt III „Rahmenverträge/Abrufaufträge" (→ [07]), Intake-Vorlage „**Vorlage_neuer
@@ -60,10 +60,23 @@ Aus der Vorlage `Preisliste_Jungheinrich.xlsx` (= „Vorlage_neuer Rahmenvertrag
 **Abschnitt 3 – Rahmenvertrag / Abruf** (`LMX_LB_RV`)
 | Feld | Wert |
 |---|---|
-| Kundenreferenznr. / Abrufbestellnr. | *(eintragen)* |
+| Kundenreferenznr. / Abrufbestellnr. | *(vom **Kunden** – dessen Bestell-/Abrufnummer; eintragen)* |
 | Volumen Abruf in € | *(eintragen)* |
 | Laufzeit von / bis | *(eintragen; ≤ KV-Laufzeit)* |
-| Bisherige RV-Nummer | *(nur bei bestehendem RV; bei Neuanlage leer)* |
+| Bisherige RV-Nummer | *(nur bei bestehendem RV; bei **Neuanlage leer**)* |
+
+> ### ⚠️ Woher kommt die **RV-Nummer**? (häufige Verwechslung)
+> Die eigentliche **Rahmenvertragsnummer ist eine interne L-Base-/Axians-Vertrags-ID**
+> (Format wie BMWs `F41946L`, → [14]) und **entsteht bei der Anlage im Vertragsmodul** – sie
+> steht **weder im Preisblatt noch in der Kundenbestellung**. Nicht verwechseln mit:
+> - **Kundenreferenz-/Abrufbestellnr.** = die Nummer, die *Jungheinrich* aus seiner Bestellung
+>   mitgibt (eigenes Formularfeld),
+> - **Bisherige RV-Nummer** = nur relevant, wenn ein *alter* RV abgelöst wird → bei Neuanlage leer.
+>
+> Diese **RV-Nummer musst du danach 1:1** verwenden: im **Matrixnamen** `PLO_<Adr>_<RV>_<Element>`
+> **und** später **in der Sendung** (Feld RV) – sonst zieht die Abrechnung keine Preise. Ob die
+> Nummer automatisch vergeben wird oder nach eigenem Schema, ist der einzige Punkt, den du kurz
+> mit **FiBu/IT** klären solltest.
 
 > ⚠️ Die **exakten Spaltennamen** in den GenTabs `LMX_LB_KV`/`LMX_LB_RV` liegen im Wissensnetz
 > nur als Definition, nicht als Zeilenlayout vor (→ [13]). Die **Felder oben** entsprechen der
@@ -173,27 +186,33 @@ Die Intake-Vorlage „Vorlage_neuer Rahmenvertrag" (= `Preisliste_Jungheinrich.x
 Abschnitt 1–3 (Kunde / Kopfvertrag / Rahmenvertrag) **vollständig**, Preisblatt beilegen.
 Übergabe an **FiBu** (vergibt SAP-Projektnr.) / Anlage durch Key-User.
 
-### Schritt 2 – Kopfvertrag in `LMX_LB_KV` anlegen
-1. Ribbon **ADMINISTRATION → Generische Tabellen → Daten** (⚠️ **„Daten"**, nicht „Definition" —
-   sonst siehst du nur die Tabellenliste statt der Inhalte, → `ANLEITUNG_logik-export.md` B).
-2. In der Tabellenauswahl **`LMX_LB_KV`** wählen/filtern → Inhalt (bestehende Kopfverträge) wird
-   angezeigt.
-3. **[F8] Neu** → leere Zeile. Felder füllen (Feld anklicken, bei Auswahlfeldern **[F5]**):
-   **Kunde/ADRID Jungheinrich (10988 / `810…`)**, **Kopfvertragsnr./Einkaufsbeschluss**,
-   **Volumen (€)**, **Laufzeit von** / **bis 31.12.2026** (Datum: `31 12` tippen).
-4. **[F12] Speichern**. Der KV ist jetzt die Klammer für die Abrufe darunter.
+> ### 🟢 Der richtige Anlageweg: das **Vertragsmodul** (nicht die GenTab direkt)
+> KV und RV werden über das **Vertrags-Modul** angelegt (bei euch „Verträge und Projekte anlegen"),
+> **nicht** durch Hand-Editieren der GenTab (S.14–15, → [15]):
+> **Allgemeiner Modulaufruf [F4]** → in der Modulliste **[F5]** → nach **„Vertrag"** suchen →
+> **Vertragsart wählen** (Kopfvertrag bzw. Rahmenvertrag) → **[OK]** → Maske ausfüllen → **[F12]**.
+>
+> Die GenTabs **`LMX_LB_KV`** / **`LMX_LB_RV`** sind der **Speicher dahinter** – dort landen die
+> Daten automatisch. GenTab **direkt** öffnen (ADMINISTRATION → Generische Tabellen → **Daten**)
+> brauchst du nur zum **Prüfen/Nachkorrigieren** (Experten-Weg), nicht für die normale Anlage.
 
-> Tipp: Gibt es schon einen KV eines ähnlichen Kunden → diesen **anzeigen → „Datensatz kopieren"**
-> und nur Kunde/Nummern/Volumen ändern. Die **exakten Spaltennamen** siehst du direkt in der
-> Tabelle; falls unklar, welche Spalte was ist, einmal mit der IT abgleichen (→ [13]).
+### Schritt 2 – Kopfvertrag (KV) anlegen
+1. **[F4] Allgemeiner Modulaufruf** → **[F5]** → **„Vertrag"** suchen → **Vertragsart = Kopfvertrag**
+   → **[OK]**.
+2. Maske füllen (Feld anklicken, bei Auswahlfeldern **[F5]**): **Kunde Jungheinrich (10988 /
+   Rechnungs-ADRID `810…`)**, **Kopfvertragsnr./Einkaufsbeschluss**, **Volumen (€)**,
+   **Laufzeit von** / **bis 31.12.2026** (Datum kurz: `31 12` tippen, → [06]).
+3. **[F12] Speichern**. Der KV ist jetzt die Klammer für die Abrufe darunter.
+4. *(Kontrolle optional: ADMINISTRATION → Generische Tabellen → Daten → `LMX_LB_KV` → Zeile da?)*
 
-### Schritt 3 – Rahmenvertrag in `LMX_LB_RV` anlegen
-1. Gleicher Weg: **ADMINISTRATION → Generische Tabellen → Daten → `LMX_LB_RV`**.
-2. **[F8] Neu** → Felder füllen: **RV-/Abrufnummer**, **Verweis auf den KV** aus Schritt 2,
-   **Kundenreferenz/Abrufbestellnr.**, **Volumen Abruf (€)**, **Laufzeit** (≤ KV),
-   **Rechnungsadresse (ADRID)**. **[F12]**.
-3. Diese **RV-Nummer** notieren — sie wird später **in der Sendung** gesetzt und löst die
-   Preisfindung aus (kein RV → Einmalangebot).
+### Schritt 3 – Rahmenvertrag (RV / Abruf) anlegen
+1. Wieder **[F4] → [F5] „Vertrag"** → **Vertragsart = Rahmenvertrag** → **[OK]** (unter dem KV
+   aus Schritt 2).
+2. Maske füllen: **Verweis auf den KV**, **Kundenreferenz/Abrufbestellnr.** (die Nummer vom
+   Kunden), **Volumen Abruf (€)**, **Laufzeit** (≤ KV), **Rechnungsadresse (ADRID)**;
+   „Bisherige RV-Nummer" bleibt **leer**. **[F12]**.
+3. Die vom System vergebene / gesetzte **RV-Nummer notieren** (interne L-Base-ID, s. Kasten oben) –
+   sie wird gleich im **Matrixnamen** und später **in der Sendung** gebraucht.
 
 ### Schritt 4 – abzurechnende Elemente in `LMX_LBATT_KO`
 1. **ADMINISTRATION → Generische Tabellen → Daten → `LMX_LBATT_KO`**.
@@ -257,8 +276,10 @@ Abschnitt 1–3 (Kunde / Kopfvertrag / Rahmenvertrag) **vollständig**, Preisbla
 ---
 
 ## 6. Offen / mit IT bzw. FiBu klären
-- Exaktes **Spaltenlayout** von `LMX_LB_KV` / `LMX_LB_RV` (Definition bekannt, Zeilenlayout nicht
-  exportiert, → [13]).
+- **RV-Nummernvergabe:** vergibt das Vertragsmodul die interne RV-Nummer **automatisch**, oder
+  wird sie nach eigenem Schema gesetzt? (steht in keiner der Quelldateien – s. Kasten in §2).
+- **Genaue Bezeichnung der Vertragsarten** im Modul „Verträge/Projekte anlegen" (welcher Eintrag
+  = Kopfvertrag, welcher = Rahmenvertrag/Abruf, → [15] S.14–15).
 - Ob **Behälter (L/XL)** und **Entsorgung (NMC/LTO/LFP, sicher/unsicher)** je eine Matrix mit
   X-/Y-Parametern oder getrennte Elemente sind — an bestehendem LOGBATT-RV orientieren.
 - Zuordnung **Standort → Element/Parameter** bei TRANS (Köln/Dortmund/Mülheim/Rundlauf): ob über
