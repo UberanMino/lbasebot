@@ -47,8 +47,21 @@ Aus der Vorlage `Preisliste_Jungheinrich.xlsx` (= „Vorlage_neuer Rahmenvertrag
 |---|---|
 | Kunde | **Jungheinrich** |
 | Kundennr. SAP | **10988** |
-| Rechnungsempfängeradresse | siehe SAP (→ ADRID der `810…`-Rechnungsadresse, → [16]) |
+| Rechnungsempfängeradresse | **ADRID `810988000`** (aus dem System bestätigt) |
 | SAP Projektnr. | kommt von Finance auf Basis dieses Formulars |
+
+> **Bestätigte reale Schlüssel (Stand Anlage 2026):** RV-Bezeichnung **`JH_OHNE`**, Rechnungs-ADRID
+> **`810988000`** → Matrixpräfix **`PLO_810988000_JH_OHNE_<Element>`**. `JH_OHNE` ist auch der Wert,
+> der später **in der Sendung** (Feld RV) gesetzt wird.
+>
+> **Bereits angelegte Matrizen:** `…_TRANS` (X = Absender-ADRID → Standort), `…_RECYC`
+> (X = Gefahrgut-Einstufung, Y = Zellchemie → sicher/unsicher × NMC/LTO/LFP), `…_VERP`
+> (X = Batterie/Modul/Zelle), `…_BEHG`, `…_STAPAB` (X = Stapler ABH), `…_ABFPA` (X = ZUFELD11N),
+> `…_LOGIS`.
+> **Noch prüfen (Preisblatt vs. vorhandene Elemente):** **VERW** (Verwaltungs-Pauschale 85 € – als
+> eigenes Element oder via `LOGIS`?), **WARTE** (Standzeit 25 €/15 min aus den Hinweisen),
+> ggf. **MAUT** (nur Ausland); zudem ob **`BEHG`** die 4 Behälterpreise (L/XL × grün/rot) über eine
+> Variable trägt. **Referenzliste = `LMX_LBATT_KO`** für `810988000` + `JH_OHNE` (s. §6-Check).
 
 **Abschnitt 2 – Kopfvertrag** (`LMX_LB_KV`)
 | Feld | Wert |
