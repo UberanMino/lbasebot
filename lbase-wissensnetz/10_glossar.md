@@ -103,7 +103,8 @@ Siehe ausführlich [08]:
 | **Spesenblock (SPB)** | Modulblock der Abrechnung, z. B. LOGBATT_SDG_BESCH_DATEN (→ [14]) |
 | **Berechnungs-Element** | LOGBATT-Abrechnungsbaustein (X_LOGB_BER), z. B. TRANS, VERP, RECYC (→ [14]) |
 | **Stammdaten-Matrix** | Preis-Matrix `PLO_<Adr>_<RV>_<Element>` (→ [14]) |
-| **RV / Rahmenvertrag** | Kundenvertrag mit hinterlegten Konditionen/Preisen (→ [14]/[16]) |
+| **KV / Kopfvertrag** | Vertragsklammer über einem Kunden: Einkaufsbeschluss + Gesamt-Volumen + Laufzeit; trägt mehrere RV/Abrufe (GenTab `LMX_LB_KV`) (→ [18]) |
+| **RV / Rahmenvertrag** | Kundenvertrag/Abruf mit hinterlegten Konditionen/Preisen; wird in der Sendung gesetzt (GenTab `LMX_LB_RV`) (→ [14]/[16]/[18]) |
 | **Einmalangebot** | Abrechnung ohne RV (Stückpreis per Dialog anpassbar) (→ [14]) |
 | **VEPID** | Verpackungs-/Behälter-ID (z. B. TRO Trockeneis, HEBGE Hegegestell, VERMI) (→ [14]) |
 | **ORGID / AG_ID / ADRID** | Organisations-/Arbeitsgruppen-/Adress-ID (→ [12]/[13]) |

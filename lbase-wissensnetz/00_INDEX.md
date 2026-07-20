@@ -32,6 +32,7 @@ werden in die passenden Bausteine eingearbeitet und in `quellen/` protokolliert.
 | 15 | `15_niederlassungsspezifisch.md` | Standort-Abläufe: Plochingen (LOGBATT), SENEC (Zoll), Salzburg-Timesped | 21st NL |
 | 16 | `16_aktueller-prozess-handbuch.md` | **Aktueller LogBATT-Prozess** (Stand 2025): Vertrieb→Dispo→Abrechnung, Sammelfaktura, T&T | Einführung + Prozessschritte |
 | 17 | `17_sendungsstatus-und-compliance.md` | **Sendungsstatus manuell setzen** (ZU/012, AB/290) + **Compliance-/Sanktionsprüfung** | Sendungsstatus IOD/POD + Compliance |
+| 18 | `18_kopf-und-rahmenvertrag-anlegen.md` | **Kopfvertrag (KV) & Rahmenvertrag (RV) anlegen** (LMX_LB_KV/RV, Intake-Vorlage, Preisblatt→Elemente, Matrizen) – Fallbeispiel | Vorlage RV + Preisblatt + [13]/[14] |
 | ⤷ | `ANLEITUNG_logik-export.md` | **How-To: lBase-Logik exportieren** (Module, GenTabs, Wertebereiche, Matrix, LI-Debug) – exakte Menüpfade | abgeleitet |
 | — | `quellen/README.md` | Quellenverzeichnis + Änderungsprotokoll | — |
 
@@ -121,6 +122,7 @@ werden in die passenden Bausteine eingearbeitet und in `quellen/` protokolliert.
 - **„Wie läuft Plochingen-Batterie / SENEC-Zoll / Salzburg-LIM?“** → [15](15_niederlassungsspezifisch.md)
 - **„Wie ist der aktuelle Gesamtprozess (Angebot→Abrechnung, Sammelfaktura, Track&Trace)?“** → [16](16_aktueller-prozess-handbuch.md)
 - **„Wie setze ich manuell einen Sendungsstatus (zugestellt/abgeholt)? Wie läuft die Compliance-/Sanktionsprüfung?“** → [17](17_sendungsstatus-und-compliance.md)
+- **„Wie lege ich einen Kopfvertrag + Rahmenvertrag mit Preisen an?“** → [18](18_kopf-und-rahmenvertrag-anlegen.md)
 
 ---
 
