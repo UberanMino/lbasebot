@@ -72,6 +72,25 @@ Genau diese beiden sind die heißen Kandidaten für den „invalid identifier“
 wie **Version/Gültigkeitszeitraum** bei Modulen (→ [03]). Die Zeile soll nur gezogen werden,
 solange `heute` in ihrem Gültigkeitsfenster liegt.
 
+### Warum nur bei dieser Sendung – und nicht bei anderen?
+ORA-904 ist zwar datenunabhängig (eine nicht existierende Spalte scheitert *immer*), aber lBase
+führt **nicht eine feste Abfrage für alle Sendungen** aus, sondern **baut das SQL je Konstellation
+dynamisch zusammen** (Sendungstyp, TPV, Übernahme, Weiterleitung → daraus die LAF-Codes). Sichtbar
+an `lmx_ab_int_laf_code2 in ('ABHOLUNG','ABHOLUNG_PARTNER','ABHOL_ZUSTELL')`: diese Liste ist der
+**Abhol-Zweig** und steht nur wegen **Direktabholung + Direktzustellung** im Statement. Nur diese
+Kombination erzeugt die Variante, die den fehlerhaften View mit `rec_von`/`rec_bis` anfasst; andere
+Konstellationen bauen ein anderes (funktionierendes) SQL → speichern fehlerfrei.
+
+„Warum jetzt?" – drei typische Auslöser:
+1. **Selten genutzte Konstellation** – der latente Bug im View wird erst jetzt erstmals durchlaufen.
+2. **Regression durch Update/Patch** – der View verlor die Gültigkeitsspalten; betroffen ist nur der
+   Code-Pfad, der diesen View nutzt.
+3. **Neue/geänderte Konfigzeile** (GenTab), die lBase erst jetzt in diese Ermittlung führt.
+
+**Für die IT:** reproduzierbar **nur mit dieser Feld-Kombination** (Einzelsendung, LTL, national,
+Direktabholung, Direktzustellung) – gezielt prüfen, ob der View seit dem letzten Patch
+`REC_VON`/`REC_BIS` verloren hat.
+
 ### Abhilfe – für IT / Lagermax / Axians
 Diagnose in der DB (Schema von lBase):
 
