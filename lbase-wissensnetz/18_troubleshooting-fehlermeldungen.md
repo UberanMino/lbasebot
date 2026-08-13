@@ -129,6 +129,56 @@ SELECT * FROM all_errors WHERE name = 'GNVW_LMX_AB_INT';
 
 ---
 
+## F-002 · Preise werden nicht gezogen – Verpackungs-/Behältercode zu lang (Bezeichnung ≠ Code)
+
+**Meldung:** *keine Fehlerbox* – die Abrechnung läuft durch, aber ein Element (z. B.
+**Behälterbereitstellung**) wird **nicht berechnet** / der Preis fehlt. Im LI-Debug fällt auf,
+dass die **Bedingung des Elements nicht ausgewertet** wird, während andere Bedingungen desselben
+RV greifen.
+**Wann:** bei bestimmten Behälter-/Verpackungstypen mit **langem Namen**; im Praxisfall
+**SafetyBATTbox `XL22PLUS`** (Daimler Truck, SBB XL2.2+, RV `3100432507` / Kopfvertrag
+`2010009171`). Tritt sowohl bei **Rahmenvertrag** als auch später bei **Einmalsendung** auf.
+
+### Ursache – Bezeichnung vs. Code
+lBase unterscheidet bei der Verpackungsart/dem Behälter zwischen **Bezeichnung** (Anzeigename,
+z. B. `XL22PLUS`) und **Code** (intern, **längenbegrenzt**). Der Code darf hier **max. 7 Zeichen**
+→ für die Bezeichnung `XL22PLUS` (8 Zeichen) lautet der Code **`XL22PLU`**.
+
+- **Auf der Sendung `XL22PLUS` zu sehen ist normal** – das ist die **Bezeichnung**.
+- Der Fehler entsteht, wo **`XL22PLUS` fälschlich als Code/Vergleichswert** hinterlegt ist
+  (Matrix-Schlüssel, GenTab-**Bedingung**). Dort muss **`XL22PLU`** stehen – sonst matcht die
+  Bedingung nie gegen den echten Code → Element wird übersprungen, kein Preis (vgl. [14]:
+  „**Bedingung exakt eintragen, sonst Fehlberechnung**“ / „Matrix-Bezeichnung muss exakt stimmen,
+  sonst werden keine Preise gezogen“).
+
+Warum „kommt es wieder“: Der Fix muss **an *allen* Stellen** erfolgen. Wird nur die Matrix/GenTab
+des konkreten RV korrigiert, taucht dasselbe bei einem **anderen RV oder im Einmalangebot-Pfad**
+(eigene Matrix/Texte, → [14] `LOGBATT_EINMALANGEBOT` / `LOGBATT_BERECHNUNG_SPC`) wieder auf.
+
+### Abhilfe – zu prüfende Stellen (Behälterbereitstellung = Element `BEHG`/`BEHG_BED`, → [14])
+Überall `XL22PLUS` → `XL22PLU` ersetzen, wo es als **Code/Vergleichswert** dient:
+1. **Verpackungs-/Behälter-Stammdaten (Wertebereich/Katalog):** sicherstellen, dass **Code =
+   `XL22PLU`**, Bezeichnung = `XL22PLUS`. Steht dort der Code als `XL22PLUS`, ist das die **Wurzel**
+   – jede neue Sendung zieht wieder den falschen Wert.
+2. **GenTab `LMX_LBATT_TX`:** die **Bedingung** je Element (Behälterbereitstellung) – genau die
+   „nicht ausgewertete“ Bedingung aus dem Debug.
+3. **GenTab `LMX_LBATT_KO`:** falls der Behältertyp dort als Wert vorkommt.
+4. **Stammdaten-Matrizen** `PLO_<Rechnungsempfänger>_<RV>_BEHG…` bzw. `PLO_BEHG_BED` /
+   `PLO_BEHG_EMPF`: X-/Y-Parameterwert (Behälter) = `XL22PLU`.
+5. **Einmalangebot-Pfad** (wenn kein RV gesetzt): dieselbe Prüfung in der dort genutzten
+   Matrix/den Texten – hier trat der Fehler erneut auf.
+
+**Vorgehen mit IT/Key-User (Sascha):** über alle LOGBATT-GenTabs (`LMX_LBATT_TX`, `LMX_LBATT_KO`),
+Matrizen (`PLO_*`) und die Verpackungs-Stammdaten nach dem String **`XL22PLUS`** suchen und durch
+**`XL22PLU`** ersetzen; Änderungen über Komponente **`Cust_LOGBATT`** übertragen (portieren). Danach
+**Debug-File des betroffenen Angebots erneut** ziehen und prüfen, ob die Behälter-Bedingung jetzt
+ausgewertet und der Preis gezogen wird.
+
+**Merke (generell):** Immer wenn ein Preis für einen bestimmten Behälter/Verpackungstyp fehlt,
+zuerst **Bezeichnung ↔ Code** prüfen – lange Namen (>7 Zeichen) sind der Klassiker.
+
+---
+
 ## Vorlage für neue Einträge
 
 ```
