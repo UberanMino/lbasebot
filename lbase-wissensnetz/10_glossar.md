@@ -116,6 +116,9 @@ Siehe ausführlich [08]:
 | **Whitelist (Attribut)** | Adress-Attribut, das eine Adresse dauerhaft von der Compliance-Sperre freistellt (→ [17]) |
 | **OFAC / BIS / EU-Sanktionsliste** | US/EU-Sanktionslisten zur Compliance-Prüfung (→ [17]) |
 | **Evidenz** | LA-Typ „Sonstiges (Evidenz)“, u. a. für Complianceprüfung (→ [17]) |
+| **Kurstabelle** | Wechselkurstabelle je Organisation (`skut_t_kurstab`); der Firma zugeordnet über `fir_kutid`. Fehlt sie → `get_kurs` liefert NULL (→ [18]) |
+| **`get_kurs` / `SBEL_KURS_UPDATE`** | Beleg-Kurs-Ermittlung; wird von der internen Verrechnung beim FSW „in Kontrolle“ aufgerufen (→ [18]) |
+| **`ORA-20xxx`** | Anwendungsseitiger Fehler (`RAISE_APPLICATION_ERROR`), keine DB-Systemstörung – Geschäftslogik bricht bewusst ab; `ORA-06512` nennt das auslösende PL/SQL-Objekt (→ [18]) |
 
 ## GenTab-Kürzel (Schnellindex → [13])
 LMX_SDG_VAR (Pflichtfelder) · LMX_STD_VAR · LMX_SDG_LIM · LMX_SDG_AUTO · LMX_FAR_AUTO ·

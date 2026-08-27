@@ -140,7 +140,9 @@ Erfassung: in Sendung/Fahrt über „Leistungsanforderung → LA-Erfassung“ od
 - **FSW „auf Fahrt“**: 1) **DFÜ** ausgelöst, 2) VKM bei Partner-/Charterfuhrpark geprüft
   (Charter: Kennzeichen in „Bez. VKM 1“). Nicht umkehrbar.
 - **FSW „in Kontrolle“**: setzen, wenn Transport abgeschlossen → stößt **automatische interne
-  Verrechnung** an.
+  Verrechnung** an. *(Die Verrechnung ermittelt dabei den Beleg-Kurs; fehlt eine gültige
+  **Kurstabelle** für die Org/das Belegdatum, bricht der FSW mit `ORA-20994 get_kurs … IS NULL`
+  ab → Troubleshooting [18](18_troubleshooting-fehlermeldungen.md).)*
 - **FSW „abgeschlossen“**: Druck-LAs (angefordert/geplant) auf der Sendung werden storniert;
   Sendung auf **„positiv erledigt“**. *(Keine Prüfung des Abrechnungsstatus!)*
 - **FSW „storniert“**: siehe Storno Fahrt.

@@ -54,6 +54,18 @@ dokumentiert, damit Aussagen nachvollziehbar bleiben.
 > [16]. ST-IOD und ST-POD sind inhaltsgleich (dieselbe „Status setzen“-Anleitung, unterschiedl.
 > Datum/Format) und gemeinsam in [17] abgebildet.
 
+## Eingearbeitete Quellen – Batch 4 (Stand: 2026-08-27)
+
+| Kürzel | Dokument | Typ | Eingearbeitet in |
+|---|---|---|---|
+| **CASE-ORA20994** | Realer Support-Fall: lBase-Fehlerprotokoll (XML aus „SQL-Fehler → Details“) + Nutzer-Schilderung; Fahrt PLO-1989 lässt sich nicht auf „in Kontrolle“ setzen | Fehlerprotokoll (XML) + Chat | **[18]** (neu), Querverweis in [12], Glossar [10], Index [00] |
+
+> **Kontext des Falls:** `ORA-20994: get_kurs(, EUR, EUR, 2026.08.26, Y, 0) IS NULL` in
+> `SPED.SBEL_KURS_UPDATE` beim FSW „in Kontrolle“ → **fehlende/nicht zugeordnete Kurstabelle**
+> (`skut_t_kurstab` / `fir_kutid`). Begleitsymptom: Status-Inkonsistenz Fahrt („auf Fahrt“) ↔
+> Sammelübersicht („in Kontrolle“). Fix ist **Stammdaten (IT/Key-User/FiBu)**, nicht Dispo.
+> Damit ist der To-Do-Punkt „Troubleshooting-Knoten“ aus [00] eröffnet ([18]).
+
 ## Noch offen / angekündigt
 
 - **Schulungstranskripte** (folgen laut Nutzer) → werden thematisch in [01]–[16]
