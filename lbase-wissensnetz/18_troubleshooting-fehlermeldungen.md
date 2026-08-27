@@ -88,22 +88,34 @@ verschwindet i. d. R., sobald der FSW nach dem Kurs-Fix sauber durchläuft.
 2. **Echten Fahrtstatus** in der geöffneten Fahrt ablesen (nicht die Sammelübersicht;
    nicht die Spalten *Status Beladung/Entladung* – die sind Sendungs-/Scanstatus).
 3. **Belegdatum** aus der Meldung notieren (im Beispiel `2026.08.26`) – dafür fehlt der Kurs.
+4. **Systemisch oder Einzelfall?** Eine **vergleichbare andere Fahrt** derselben Firma/Periode
+   testweise auf „in Kontrolle“ setzen:
+   - **Andere scheitern auch** (gleicher Fehler) → **Kurstabelle grundsätzlich nicht
+     zugeordnet/kaputt** → Konfiguration, i. d. R. Fall für **Lagermax/Axians**.
+   - **Andere funktionieren** → das Problem ist **Fahrt-/datumsspezifisch** (z. B. Kurs für
+     diesen Tag fehlt, oder diese Fahrt/ihr Beleg hängt an einer Org ohne Kurstabelle).
 
-### Abhilfe – **IT / Key-User / FiBu** (nicht durch Dispo lösbar)
-> Der Disponent kann das **nicht** aus der Fahrt heraus beheben. **An IT/Key-User melden.**
+### Abhilfe – Ebene **Stammdaten/Konfiguration** (nicht durch Dispo lösbar)
+> Das ist **kein** Dispo-/Fahrtfehler und aus der Fahrt heraus nicht behebbar. Es liegt auf
+> **Stammdaten-/Konfigurationsebene** – als **Key-User (1st Level)** zuerst selbst prüfen,
+> sonst an **Lagermax/Axians (2nd Level)** eskalieren.
 
-1. **Kurstabelle zuordnen/prüfen:** In den **Firmen-/Org-Stammdaten (MD PROD)** prüfen, ob der
-   **Firma „LogBATT GmbH“** bzw. der betroffenen Org-Einheit (oder einer **übergeordneten**
-   Einheit in der Org-Hierarchie) eine **Kurstabelle** zugeordnet ist
-   (`sfir_firma.fir_kutid`) und ob diese für das Belegdatum **gültige Einträge** hat.
+1. **Kurstabelle zuordnen/prüfen (Key-User):** In den **Währungs-/Kurs-Stammdaten (MD PROD)**
+   prüfen, ob der **Firma „LogBATT GmbH“** bzw. der betroffenen Org-Einheit (oder einer
+   **übergeordneten** Einheit in der Org-Hierarchie) eine **Kurstabelle** zugeordnet ist
+   und ob diese für das Belegdatum **gültige Einträge** hat.
+   *(Technisch: Zuordnung `sfir_firma.fir_kutid`, Kurstabelle `skut_t_kurstab`.)*
 2. **Kurs nachpflegen/importieren:** Fehlt der Tages-/Periodenkurs für das Datum → **Kurs
-   pflegen** bzw. Kurstabelle der Org zuordnen. (Prüfen, ob ein automatischer Kursimport
-   ausgefallen ist.)
-3. **Erneut versuchen:** Danach den FSW **aus der geöffneten Fahrt** `auf Fahrt → in Kontrolle`
+   pflegen** bzw. Kurstabelle der Org zuordnen. Prüfen, ob ein automatischer Kursimport
+   ausgefallen ist.
+3. **Eskalation (2nd Level):** Ist gar keine Kurstabelle konfiguriert / ist die Zuordnung
+   nicht über die Oberfläche herstellbar → **Ticket an Lagermax/Axians** mit dem
+   technischen Detail unten (Betreiber = Lagermax, Hersteller = Axians/lBase, → [00]).
+4. **Erneut versuchen:** Danach den FSW **aus der geöffneten Fahrt** `auf Fahrt → in Kontrolle`
    setzen. Läuft die Verrechnung durch, gleichen sich Fahrt und Übersicht ab → anschließend
    `→ abgeschlossen`.
-4. **Bleibt die Status-Inkonsistenz** nach erfolgreichem FSW bestehen → separat vom Key-User
-   im Backend geradeziehen lassen.
+5. **Bleibt die Status-Inkonsistenz** nach erfolgreichem FSW bestehen → separat über
+   Lagermax/Axians im Backend geradeziehen lassen.
 
 ### Beteiligte DB-Objekte (für IT/Key-User)
 | Objekt | Bedeutung |
@@ -113,7 +125,7 @@ verschwindet i. d. R., sobald der FSW nach dem Kurs-Fix sauber durchläuft.
 | `sorg_t_einheit` (`org_orgid`, `org_orgidh`) | Org-Hierarchie (Baumsuche der gültigen Kurstabelle) |
 | `sfir_firma.fir_kutid` / `sfiw_firwrg` | der Firma zugeordnete **Kurstabelle** / **Firmenwährung** |
 
-### Ticket-Vorlage (1st Level / Key-User, → [07](07_prozesse-logbatt.md) Support VII)
+### Ticket-Vorlage (Eskalation an Lagermax/Axians – 2nd Level, → [07](07_prozesse-logbatt.md) Support VII)
 ```
 Betreff: LogBATT – Fahrt lässt sich nicht auf „in Kontrolle“ setzen (ORA-20994 get_kurs)
 
@@ -133,6 +145,9 @@ Kontext:     FA 8001 LogBATT GmbH · NL 8002 PLO Plochingen · AB 8003 PLO Landv
 - `ORA-20994 … get_kurs … IS NULL` = **Kurstabelle/Wechselkurs fehlt**, nicht „Fahrt kaputt“.
 - Tritt beim **FSW „in Kontrolle“** auf, weil dieser die **interne Verrechnung** (Beleg-Kurs)
   anstößt.
-- **Stammdaten-Fix durch IT/Key-User/FiBu**; Dispo kann es nicht in der Fahrt beheben.
+- **Stammdaten-/Konfig-Fix**: Key-User prüft Kurstabellen-Zuordnung, sonst Eskalation an
+  **Lagermax/Axians (2nd Level)**; aus der Fahrt/Dispo heraus nicht behebbar.
+- **Gegentest** mit einer anderen Fahrt derselben Firma/Periode trennt „systemisch fehlende
+  Kurstabelle“ von „nur diese Fahrt/dieses Datum“.
 - Zeigt die Übersicht „in Kontrolle“, die Fahrt aber „auf Fahrt“ → **Abbruch-Nebenwirkung**,
   kein zweiter, eigener Fehler.
