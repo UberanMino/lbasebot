@@ -174,3 +174,107 @@ Kontext:     FA 8001 LogBATT GmbH · NL 8002 PLO Plochingen · AB 8003 PLO Landv
   scheitern **alle** → Kurstabellen-Konfiguration (dann 2nd Level Lagermax/Axians).
 - Zeigt die Übersicht „in Kontrolle“, die Fahrt aber „auf Fahrt“ → **Abbruch-Nebenwirkung**,
   kein zweiter, eigener Fehler.
+
+---
+
+## 2) `ORA-01403` „Keine Daten gefunden“ im Trigger `SBEL_BEF_SAEUMNISZA` (Angebot → Einzelsendung)
+
+**Kurzdiagnose:** Beim Umwandeln **Angebot → Einzelsendung** legt lBase einen **Beleg** an
+(`insert into sbel_beleg`). Ein **Before-Insert-Trigger** darauf macht ein `SELECT … INTO` für
+eine **Zahlungs-/Säumnis-Angabe (Zahlungsbedingung/Zahlungsziel)** und findet **keine Zeile** →
+`ORA-01403` → als Trigger-Fehler `ORA-04088`. Meist **fehlender Stammsatz** (Zahlungsbedingung
+am Rechnungsempfänger/Debitor), sonst **Trigger-Robustheitslücke** (2nd Level).
+
+> ⚠️ Unabhängig vom `get_kurs`-Fall (1): anderer Trigger, anderer Mechanismus, anderer
+> Prozessschritt (hier **Angebot → Einzelsendung**, nicht der FSW).
+
+### Symptom
+- Der Statuswechsel einer Sendung von **„Angebot“ → „Einzelsendung/Auftrag“** bricht mit einem
+  SQL-Fehler ab (Beispiel `ORA-1403`).
+
+### Meldungstext (Beispiel)
+```
+ORA-01403: Keine Daten gefunden
+ORA-06512: in "SPED.SBEL_BEF_SAEUMNISZA", Zeile 7
+ORA-04088: Fehler bei der Ausführung von Trigger 'SPED.SBEL_BEF_SAEUMNISZA'
+```
+Auslösendes SQL (Beleg-Insert, gekürzt):
+```sql
+insert into sbel_beleg (BEL_BELID, BEL_ORGID, BEL_ADRID, BEL_LASID, BEL_BTYID, BEL_BETNTO,
+  BEL_VORZ, BEL_ZZ, BEL_ZZVAR, BEL_ABC, BEL_INTERN, BEL_BESID, BEL_UID_RA, BEL_UID_RE,
+  BEL_AEND, BEL_USRID, BEL_ACLID, BEL_ERFDAT)
+values (:p0, :p1, :p2 /*Adr*/, '210', 'AB', :p3, '1', :p4, 1, 'A', 0, 'E',
+  :p5 /*UID_RA*/, :p6 /*UID_RE*/, sysdate, :p7, :p8, sysdate);
+```
+
+### Ursache
+- Der Insert in `sbel_beleg` löst den **Trigger `SBEL_BEF_SAEUMNISZA`** aus (Namensteile:
+  *SBEL* = Beleg, *BEF* = Before-Insert, *SAEUMNIS/ZA* = **Säumnis/Zahlung** → Zahlungsziel/
+  -bedingung). Der Trigger führt in Zeile 7 ein `SELECT … INTO` aus, das **keine Zeile** trifft.
+- `ORA-01403 (NO_DATA_FOUND)` wird im Trigger **nicht abgefangen** → der Insert bricht ab
+  (`ORA-04088`). *(Die genaue gesuchte Zeile ist ohne Trigger-Quelltext nicht belegbar; der
+  Trigger-Name legt eine **Zahlungsbedingung/Säumnis-Angabe** nahe.)*
+- **Wahrscheinlichster Auslöser:** dem beteiligten **Rechnungsempfänger/Debitor** (Beleg-Adresse
+  `BEL_ADRID` / UID-Felder) fehlt eine **Zahlungsbedingung/Zahlungsziel**, die der Trigger
+  zwingend erwartet.
+- **Sonderkonstellation beachten:** Ist die Sendung **„Dienstgut ohne Berechnung“** (interne
+  Sendung, Frankatur `991`) mit **Rechnungsempfänger = eigene Firma** (z. B. LogBATT GmbH
+  `80000001`), existiert für diesen „Debitor“ evtl. **gar kein Zahlungs-/Debitorstammsatz** –
+  dann läuft der Zahlungs-Trigger ins Leere. Das ist ein starker Kandidat für diesen Fall.
+
+### Diagnose (schnell)
+1. **[Details]** öffnen → bestätigt `SBEL_BEF_SAEUMNISZA` / `sbel_beleg`-Insert.
+2. **Nur diese Sendung oder alle?** Ein **anderes Angebot** testweise in eine Einzelsendung
+   wandeln:
+   - **Andere gehen** → diese Sendung/ihre Adressen sind der Unterschied → Schritt 3.
+   - **Alle scheitern** → generelle Konfig-/Trigger-Lücke → 2nd Level.
+3. **Adressen der Sendung vergleichen** (RECH/Rechnungsempfänger, Auftraggeber, Empfänger):
+   Hat der **Rechnungsempfänger/Debitor** eine **Zahlungsbedingung/Zahlungsziel** hinterlegt?
+   Fehlt sie bei genau dieser Adresse → Auslöser gefunden.
+4. **Konstellation prüfen:** „Dienstgut ohne Berechnung“ + interne Rechnung an eigene Firma?
+   → gehört hier überhaupt ein (Abrechnungs-)Beleg zu entstehen?
+
+### Abhilfe
+**A) Regelfall – fehlende Zahlungs-Stammdaten (Key-User/Stammdaten):**
+1. Am **Rechnungsempfänger/Debitor** die **Zahlungsbedingung/Zahlungsziel** ergänzen (analog zu
+   funktionierenden Debitoren) → Umwandlung erneut versuchen.
+
+**B) Interne No-Charge-Sendung / unklare Konstellation:**
+2. Ist die Sendung „Dienstgut ohne Berechnung“ und soll gar nicht fakturiert werden, aber das
+   System will trotzdem einen Zahlungs-Beleg bauen → **Konfiguration/Trigger** passt nicht zur
+   Konstellation → **Lagermax/Axians (2nd Level)**.
+
+**C) Immer prüfenswert – Trigger-Robustheit:**
+3. Ein **nicht abgefangenes `ORA-01403` in einem Insert-Trigger** ist eine Robustheitslücke: der
+   Trigger sollte den „keine Zahlungsbedingung“-Fall sauber behandeln statt hart abzubrechen.
+   Das gehört von **Lagermax/Axians** gefixt (mit Beispiel-Sendung melden).
+
+### Beteiligte DB-Objekte
+| Objekt | Bedeutung |
+|---|---|
+| `sbel_beleg` (`BEL_ADRID`, `BEL_BTYID='AB'`, `BEL_LASID='210'`, `BEL_UID_RA/RE`) | Beleg, der bei Angebot→Einzelsendung entsteht |
+| Trigger `SPED.SBEL_BEF_SAEUMNISZA` | Before-Insert-Trigger; wirft hier `ORA-01403`/`ORA-04088` |
+
+### Ticket-Vorlage (Eskalation an Lagermax/Axians – 2nd Level, → [07](07_prozesse-logbatt.md) Support VII)
+```
+Betreff: LogBATT – Angebot lässt sich nicht in Einzelsendung wandeln (ORA-01403, Trigger SBEL_BEF_SAEUMNISZA)
+
+Sendung:     PLO-5495-PLO-1 (Angebot → Einzelsendung schlägt fehl)
+Fehler:      ORA-01403 Keine Daten gefunden → ORA-04088 Trigger SPED.SBEL_BEF_SAEUMNISZA, Zeile 7
+Vorgang:     insert into sbel_beleg (BTYID='AB', LASID='210') beim Statuswechsel Angebot→Einzelsendung
+Deutung:     SELECT INTO im Zahlungs-/Säumnis-Trigger findet keine Zeile (fehlende Zahlungsbedingung?);
+             ORA-01403 wird im Trigger nicht abgefangen.
+Konstellation: „Dienstgut ohne Berechnung“ (Frankatur 991), Rechnungsempfänger = LogBATT GmbH (80000001, intern)
+Bitte prüfen: erwartete Zahlungs-/Debitor-Stammdaten für diese Konstellation; Trigger sollte den
+             Fall „keine Zahlungsbedingung“ robust behandeln.
+Kontext:     User kuzmea · Session 1213/59771 bzw. 217/13720 · Sendung PLO-5495-PLO-1
+```
+
+### Merksätze
+- `ORA-01403` + `ORA-04088` = ein **Trigger** bricht ab, weil ein `SELECT … INTO` **keine Zeile**
+  findet – **fehlender/erwarteter Stammsatz**, nicht „Sendung kaputt“.
+- Hier beim Schritt **Angebot → Einzelsendung** (Beleg-Insert), Trigger `SBEL_BEF_SAEUMNISZA`
+  (Zahlung/Säumnis).
+- Zuerst **Zahlungsbedingung am Rechnungsempfänger/Debitor** prüfen; Sonderfall interne
+  No-Charge-Sendung an eigene Firma beachten.
+- Nicht abgefangenes `ORA-01403` im Trigger = **Robustheitslücke** → an Lagermax/Axians.

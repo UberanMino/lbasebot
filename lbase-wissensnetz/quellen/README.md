@@ -70,6 +70,13 @@ dokumentiert, damit Aussagen nachvollziehbar bleiben.
 > Axians) nur, wenn **alle** vergleichbaren Fahrten scheitern. Begleitsymptom bleibt die
 > Status-Inkonsistenz Fahrt („auf Fahrt“) ↔ Sammelübersicht („in Kontrolle“). To-Do
 > „Troubleshooting-Knoten“ aus [00] eröffnet ([18]).
+>
+> **Zweiter, unabhängiger Fall (Sendung PLO-5495-PLO-1):** `ORA-01403` „Keine Daten gefunden“
+> im Trigger `SPED.SBEL_BEF_SAEUMNISZA` beim Umwandeln **Angebot → Einzelsendung** (Insert in
+> `sbel_beleg`). Ein `SELECT … INTO` (Zahlung/Säumnis) findet keine Zeile und wird nicht
+> abgefangen. Wahrscheinlich fehlende Zahlungsbedingung am Rechnungsempfänger/Debitor;
+> Sonderfall „Dienstgut ohne Berechnung“ mit interner Rechnung an die eigene Firma. Als
+> **Fall 2** in [18] dokumentiert.
 
 ## Noch offen / angekündigt
 

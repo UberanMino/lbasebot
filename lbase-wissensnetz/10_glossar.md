@@ -119,6 +119,8 @@ Siehe ausführlich [08]:
 | **Kurstabelle** | Wechselkurstabelle je Organisation (`skut_t_kurstab`); der Firma zugeordnet über `fir_kutid`. Fehlt sie → `get_kurs` liefert NULL (→ [18]) |
 | **`get_kurs` / `SBEL_KURS_UPDATE`** | Beleg-Kurs-Ermittlung; wird von der internen Verrechnung beim FSW „in Kontrolle“ aufgerufen (→ [18]) |
 | **`ORA-20xxx`** | Anwendungsseitiger Fehler (`RAISE_APPLICATION_ERROR`), keine DB-Systemstörung – Geschäftslogik bricht bewusst ab; `ORA-06512` nennt das auslösende PL/SQL-Objekt (→ [18]) |
+| **`ORA-01403` / `ORA-04088`** | `SELECT … INTO` findet keine Zeile (No Data Found); tritt sie in einem **Trigger** auf, meldet Oracle zusätzlich `ORA-04088`. Meist fehlender/erwarteter Stammsatz (→ [18]) |
+| **`SBEL_BEF_SAEUMNISZA`** | Before-Insert-Trigger auf `sbel_beleg` (Zahlung/Säumnis); kann bei Angebot→Einzelsendung mit `ORA-01403` abbrechen (→ [18]) |
 
 ## GenTab-Kürzel (Schnellindex → [13])
 LMX_SDG_VAR (Pflichtfelder) · LMX_STD_VAR · LMX_SDG_LIM · LMX_SDG_AUTO · LMX_FAR_AUTO ·
