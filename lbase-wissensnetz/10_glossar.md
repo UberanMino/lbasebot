@@ -121,6 +121,8 @@ Siehe ausführlich [08]:
 | **`ORA-20xxx`** | Anwendungsseitiger Fehler (`RAISE_APPLICATION_ERROR`), keine DB-Systemstörung – Geschäftslogik bricht bewusst ab; `ORA-06512` nennt das auslösende PL/SQL-Objekt (→ [18]) |
 | **`ORA-01403` / `ORA-04088`** | `SELECT … INTO` findet keine Zeile (No Data Found); tritt sie in einem **Trigger** auf, meldet Oracle zusätzlich `ORA-04088`. Meist fehlender/erwarteter Stammsatz (→ [18]) |
 | **`SBEL_BEF_SAEUMNISZA`** | Before-Insert-Trigger auf `sbel_beleg` (Zahlung/Säumnis); kann bei Angebot→Einzelsendung mit `ORA-01403` abbrechen (→ [18]) |
+| **NOTOK / STATUS = NOTOK** | Ergebnis eines LI-Prüfmoduls: Bedingung **nicht** erfüllt → Vorgang bewusst gesperrt (z. B. „Abrechnungsbedingungen NICHT erfüllt“, → [18]) |
+| **Interessent vs. Kunde/Debitor** | Nur ein **vollständiger Kunde/Debitor** (Rechnungsanschrift, UID, Zahlungsbed., Vertriebler) ist **abrechenbar**; Interessent nicht (→ [16]/[18]) |
 
 ## GenTab-Kürzel (Schnellindex → [13])
 LMX_SDG_VAR (Pflichtfelder) · LMX_STD_VAR · LMX_SDG_LIM · LMX_SDG_AUTO · LMX_FAR_AUTO ·

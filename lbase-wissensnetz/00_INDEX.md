@@ -32,7 +32,7 @@ werden in die passenden Bausteine eingearbeitet und in `quellen/` protokolliert.
 | 15 | `15_niederlassungsspezifisch.md` | Standort-Abläufe: Plochingen (LOGBATT), SENEC (Zoll), Salzburg-Timesped | 21st NL |
 | 16 | `16_aktueller-prozess-handbuch.md` | **Aktueller LogBATT-Prozess** (Stand 2025): Vertrieb→Dispo→Abrechnung, Sammelfaktura, T&T | Einführung + Prozessschritte |
 | 17 | `17_sendungsstatus-und-compliance.md` | **Sendungsstatus manuell setzen** (ZU/012, AB/290) + **Compliance-/Sanktionsprüfung** | Sendungsstatus IOD/POD + Compliance |
-| 18 | `18_troubleshooting-fehlermeldungen.md` | **Troubleshooting** konkreter lBase-Fehlermeldungen (Ursache/Abhilfe/Ticket) – `ORA-20994` get_kurs beim FSW „in Kontrolle“; `ORA-01403` Trigger `SBEL_BEF_SAEUMNISZA` bei Angebot→Einzelsendung | Echtbetrieb / Support-Fälle |
+| 18 | `18_troubleshooting-fehlermeldungen.md` | **Troubleshooting** konkreter lBase-Fehlermeldungen (Ursache/Abhilfe/Ticket) – `ORA-20994` get_kurs beim FSW „in Kontrolle“; `ORA-01403` Trigger `SBEL_BEF_SAEUMNISZA` bei Angebot→Einzelsendung; „Abrechnungsbedingungen NICHT erfüllt“ (NOTOK) | Echtbetrieb / Support-Fälle |
 | ⤷ | `ANLEITUNG_logik-export.md` | **How-To: lBase-Logik exportieren** (Module, GenTabs, Wertebereiche, Matrix, LI-Debug) – exakte Menüpfade | abgeleitet |
 | — | `quellen/README.md` | Quellenverzeichnis + Änderungsprotokoll | — |
 

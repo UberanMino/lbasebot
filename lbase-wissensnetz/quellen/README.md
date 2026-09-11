@@ -77,6 +77,12 @@ dokumentiert, damit Aussagen nachvollziehbar bleiben.
 > abgefangen. Wahrscheinlich fehlende Zahlungsbedingung am Rechnungsempfänger/Debitor;
 > Sonderfall „Dienstgut ohne Berechnung“ mit interner Rechnung an die eigene Firma. Als
 > **Fall 2** in [18] dokumentiert.
+>
+> **Dritter Fall (Sendung PLO-5546-PLO-1, Abrechnung an Kußmaul Transporte 811729000):**
+> Meldung „Abrechnungsbedingungen NICHT erfüllt / STATUS = NOTOK“ beim „Abrechnung starten“ –
+> **kein SQL-Fehler**, sondern ein Abrechnungs-Prüfmodul. Wahrscheinliche Ursache: Partner kein
+> vollständiger **Kunde/Debitor** (Interessent nicht abrechenbar; SAP-Sync ~15 Min). Richtungs-
+> Klarstellung Interessent↔Kunde ergänzt. Als **Fall 3** in [18] dokumentiert.
 
 ## Noch offen / angekündigt
 

@@ -278,3 +278,71 @@ Kontext:     User kuzmea · Session 1213/59771 bzw. 217/13720 · Sendung PLO-549
 - Zuerst **Zahlungsbedingung am Rechnungsempfänger/Debitor** prüfen; Sonderfall interne
   No-Charge-Sendung an eigene Firma beachten.
 - Nicht abgefangenes `ORA-01403` im Trigger = **Robustheitslücke** → an Lagermax/Axians.
+
+---
+
+## 3) „Abrechnungsbedingungen NICHT erfüllt“ (STATUS = NOTOK) beim „Abrechnung starten“
+
+**Kurzdiagnose:** **Keine DB-Fehlermeldung**, sondern ein **Prüfmodul der Abrechnungslogik** (LI)
+blockiert die Abrechnung bewusst, weil die **Abrechnungsbedingungen nicht erfüllt** sind.
+Häufigste Ursache: der abzurechnende **Partner ist kein vollständiger Kunde/Debitor** (noch
+**Interessent** oder Pflichtfelder fehlen) – oft nach einer **SAP-Änderung, die noch nicht
+synchronisiert** ist.
+
+> Unabhängig von den `ORA`-Fällen (1)/(2): kein Absturz, sondern eine **bewusste Sperre**. Es
+> entsteht keine Abrechnungs-LA/Rechnung, bis die Bedingung erfüllt ist.
+
+### Symptom
+- Beim **„Abrechnung starten“** (Typ Abrechnung, Subtyp z. B. „An den Kunden“) erscheint eine
+  **Meldung** statt eines SQL-Fehlers.
+
+### Meldungstext (Beispiel)
+```
+Abrechnungsbedingungen NICHT erfüllt NOTOK am 2026.09.11 11:00:33
+von jungit
+FSW = 410, STATUS = NOTOK
+```
+- `von <user>` = User/Terminal; `FSW`/`STATUS = NOTOK` = **Ergebnis des Prüfmoduls** (OK/NOTOK).
+
+### Ursache
+- Ein **Abrechnungs-Prüfmodul** wertet die Bedingungen aus und liefert **NOTOK** → die Abrechnung
+  wird nicht gestartet (analog zu den *Sendungs-Prüfmodulen*, → [02]/[09]).
+- **Stärkster Kandidat:** Der abzurechnende Partner ist **kein vollständiger Kunde/Debitor**.
+  Für „Abrechnung an den Kunden“ braucht es einen **echten Kunden** mit **Rechnungsanschrift,
+  gültiger UID, Zahlungsbedingung, Vertriebsmitarbeiter, USt-Satz** (→ [07] Proz. I, [16] Vertrieb).
+
+> **Richtung wichtig (häufiges Missverständnis):** Ein **Interessent ist NICHT abrechenbar** –
+> das Prozess-Handbuch sagt sogar: Neukunde *direkt als Kunde anlegen, „Interessent-Status
+> entfällt“* ([16] Vertrieb Pkt. 1). Das NOTOK kommt also, wenn der Partner **(noch) Interessent
+> bzw. unvollständig** ist – **nicht**, weil er „schon Kunde“ ist. Ein sauberer Kunde ist die
+> **Voraussetzung**, damit es klappt.
+
+- **SAP-Sync beachten:** Kundenstammdaten sind in **SAP führend** und laufen nur **~alle 15 Min**
+  nach lBase (→ [07]/[16]). Frisch in SAP geänderte Partner (Interessent→Kunde, ergänzte Felder)
+  sind evtl. **noch nicht** in lBase → bis dahin NOTOK.
+- Kundennummern-Konvention: **Kunden „81…“**, Rechnungsempfänger „810…“ (→ [16]). Eine vergebene
+  „81…“-Nummer heißt „Kunde“, garantiert aber **nicht**, dass alle Debitorfelder befüllt sind.
+- Andere mögliche NOTOK-Gründe (nachrangig): fehlende **Kondition/Preis/Rahmenvertrag**,
+  **Spesencode**, **Leistungsdatum/Buchungsperiode**.
+
+### Diagnose (schnell)
+1. **Partner in lBase prüfen** (Adresse/Debitor, im Beispiel Kußmaul **811729000**): vollständiger
+   **Kunde** mit Rechnungsanschrift, UID, Zahlungsbedingung, Vertriebler?
+2. War der Partner zuletzt **Interessent** oder wurde in SAP gerade geändert? → **~15 Min Sync**
+   abwarten bzw. prüfen, ob der neue Stand in lBase angekommen ist.
+3. **Gegenprobe:** Gleiche Abrechnung bei einem sauber angelegten Kunden → läuft die durch, ist
+   das Kundenstammbild die Differenz.
+
+### Abhilfe
+1. **Fehlende Kundenfelder ergänzen (Vertrieb, in SAP)** – Rechnungsanschrift/UID/Zahlungsbedingung/
+   Vertriebler; **direkt als Kunde**, nicht als Interessent. Nach dem **Sync** erneut „Abrechnung
+   starten“.
+2. Zeigt sich, dass die Bedingung an etwas anderem hängt (Kondition/Preis/Spesencode/Periode) →
+   entsprechend nachziehen; bei unklarer Prüfregel den Detailtext des Prüfmoduls heranziehen bzw.
+   Key-User/2nd Level.
+
+### Merksätze
+- `STATUS = NOTOK` = **bewusste Sperre** eines Abrechnungs-Prüfmoduls, kein Absturz.
+- „An den Kunden“ abrechnen geht **nur mit vollständigem Kunden/Debitor**; **Interessent = nicht
+  abrechenbar**.
+- **SAP ist führend**, Sync ~15 Min – frische Kundenänderungen brauchen einen Moment.
