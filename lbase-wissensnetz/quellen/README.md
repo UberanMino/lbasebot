@@ -58,13 +58,18 @@ dokumentiert, damit Aussagen nachvollziehbar bleiben.
 
 | Kürzel | Dokument | Typ | Eingearbeitet in |
 |---|---|---|---|
-| **CASE-ORA20994** | Realer Support-Fall: lBase-Fehlerprotokoll (XML aus „SQL-Fehler → Details“) + Nutzer-Schilderung; Fahrt PLO-1989 lässt sich nicht auf „in Kontrolle“ setzen | Fehlerprotokoll (XML) + Chat | **[18]** (neu), Querverweis in [12], Glossar [10], Index [00] |
+| **CASE-ORA20994** | Reale Support-Fälle (mehrfach): lBase-Fehlerprotokolle (XML aus „SQL-Fehler → Details“) + Key-User-Schilderung; Fahrt lässt sich nicht auf „in Kontrolle“ setzen | Fehlerprotokoll (XML) + Chat | **[18]** (neu), Querverweis in [12], Glossar [10], Index [00] |
 
-> **Kontext des Falls:** `ORA-20994: get_kurs(, EUR, EUR, 2026.08.26, Y, 0) IS NULL` in
-> `SPED.SBEL_KURS_UPDATE` beim FSW „in Kontrolle“ → **fehlende/nicht zugeordnete Kurstabelle**
-> (`skut_t_kurstab` / `fir_kutid`). Begleitsymptom: Status-Inkonsistenz Fahrt („auf Fahrt“) ↔
-> Sammelübersicht („in Kontrolle“). Fix ist **Stammdaten (IT/Key-User/FiBu)**, nicht Dispo.
-> Damit ist der To-Do-Punkt „Troubleshooting-Knoten“ aus [00] eröffnet ([18]).
+> **Kontext & Lernkurve:** `ORA-20994: get_kurs(, EUR, EUR, <Datum>, Y, 0) IS NULL` in
+> `SPED.SBEL_KURS_UPDATE` beim FSW „in Kontrolle“. Erste Deutung war „fehlende Kurstabelle
+> (Konfiguration)“. **Korrigiert durch Feld-Erfahrung des Key-Users:** Der `get_kurs`-Fehler
+> ist ein **Folgesymptom**; eigentlicher Auslöser ist meist ein **Objekt in verfrühtem Status**,
+> dessen Beleg keine saubere Org-/Währungszuordnung hat. Bestätigte Fälle: (1) **Sendung noch
+> im Angebotsstatus** (nicht in Einzelsendung übertragen), (2) **LA nicht „fertig zum Drucken“**.
+> Regelfall daher **operativ** lösbar (Auftragsmgmt/Dispo); Kurstabellen-Konfiguration (Lagermax/
+> Axians) nur, wenn **alle** vergleichbaren Fahrten scheitern. Begleitsymptom bleibt die
+> Status-Inkonsistenz Fahrt („auf Fahrt“) ↔ Sammelübersicht („in Kontrolle“). To-Do
+> „Troubleshooting-Knoten“ aus [00] eröffnet ([18]).
 
 ## Noch offen / angekündigt
 

@@ -28,10 +28,12 @@ aus [00] ein).
 
 ## 1) `ORA-20994` – `get_kurs(...) IS NULL` beim Fahrtstatuswechsel „in Kontrolle“
 
-**Kurzdiagnose:** Fehlende/nicht zugeordnete **Kurstabelle (Wechselkurs)** für die
-Organisation zum Belegdatum → die von der internen Verrechnung angestoßene
-**Beleg-Kurs-Ermittlung** findet keinen Kurs und bricht ab. **Kein Dispo-/Fahrtfehler –
-Stammdatenproblem (IT/Key-User/FiBu).**
+**Kurzdiagnose:** Die vom FSW „in Kontrolle“ angestoßene interne Verrechnung will einen
+**Beleg-Kurs** ermitteln und findet **keine Kurstabellen-ID** → Abbruch. **Meist ist die
+Ursache ein Objekt auf der Fahrt in verfrühtem Status** (z. B. Sendung noch im **Angebotsstatus**
+oder **LA nicht „fertig zum Drucken“**), das keinen sauberen Beleg liefert – **nicht** eine
+generell fehlende Kurstabelle. Erst Objekt-Stati prüfen (operativ), Konfiguration nur, wenn
+**alle** vergleichbaren Fahrten scheitern.
 
 ### Symptom
 - Der **Fahrtstatuswechsel (FSW) „auf Fahrt“ → „in Kontrolle“** lässt sich nicht setzen; es
@@ -54,17 +56,33 @@ JOIN  (SELECT org_orgid FROM sorg_t_einheit
         START WITH org_orgid = :p3 /*Org*/ CONNECT BY PRIOR org_orgid = org_orgidh) ON kut_orgid = org_orgid
 ```
 
-### Ursache
-- Die Funktion `get_kurs` erwartet als **1. Argument die Kurstabellen-ID `kut_kutid`**. Im
-  Fehlertext ist diese **leer** (`get_kurs(` **leer** `, EUR, EUR, …)`).
-- Grund: Der Join sucht über die **Org-Hierarchie** (`START WITH … CONNECT BY …`) eine
-  **gültige Kurstabelle** (`skut_t_kurstab`). `MAX(kut_kutid)` liefert **NULL** →
-  **es ist keine Kurstabelle für die betroffene Organisation zum Belegdatum zugeordnet/gültig**.
-- Deshalb liefert `get_kurs` NULL – und die Logik wirft `ORA-20994`.
+### Ursache – Symptom vs. eigentlicher Auslöser
+**Technisch (Symptom):** `get_kurs` erwartet als 1. Argument die **Kurstabellen-ID `kut_kutid`**.
+Im Fehlertext ist diese **leer**. Der Join sucht über die **Org-Hierarchie**
+(`START WITH org_orgid = :p3 CONNECT BY …`) eine gültige Kurstabelle (`skut_t_kurstab`);
+`MAX(kut_kutid)` kommt **NULL** zurück → `get_kurs` liefert NULL → `ORA-20994`.
 
-> ⚠️ Das scheitert **sogar bei `EUR → EUR`**: Ohne zugeordnete Kurstabelle gibt es überhaupt
-> keinen Kurs (auch nicht den trivialen 1:1). Der Fehler heißt also **nicht**, dass ein
-> Fremdwährungskurs fehlt, sondern dass die **Kurstabelle selbst fehlt/nicht zugeordnet** ist.
+> ⚠️ Das scheitert **sogar bei `EUR → EUR`** – der Fehler heißt also **nicht** „Fremdwährungs­kurs
+> fehlt“, sondern die **Kurstabellen-ID konnte nicht aufgelöst werden**.
+
+**Eigentlicher Auslöser (Praxis – wichtig!):** In der Regel ist **nicht** die Kurstabelle
+grundsätzlich falsch konfiguriert. Meist ist **`:p3` (die Org des Belegs/der Sendung) leer oder
+unbrauchbar**, weil ein **Objekt auf der Fahrt in einem verfrühten/unvollständigen Status** hängt
+und daher **keinen sauberen Beleg mit gültiger Org-/Währungszuordnung** hat. Die interne
+Verrechnung versucht trotzdem, dafür einen Kurs zu ermitteln → Baumsuche findet nichts → NULL.
+
+Der `get_kurs`-Fehler ist damit ein **Folgesymptom**. **Zuerst die Objekt-Stati auf der Fahrt
+prüfen**, nicht die Kurstabellen-Konfiguration.
+
+**Im Feld bestätigte Auslöser:**
+| Auslöser | woran erkennbar | Abhilfe (Ebene) |
+|---|---|---|
+| **Sendung noch im Angebotsstatus** (nicht in Einzelsendung übertragen, → [07] Proz. IX) | Sendung auf der Fahrt hat Angebots-/Angebotsstatus statt Auftrag | **Operativ** (Auftragsmgmt/Dispo) |
+| **LA (Leistungsanforderung) nicht auf „fertig zum Drucken“** | Abrechnungs-/Druck-LA hängt in unfertigem Status | **Operativ** (Auftragsmgmt) |
+| Kurstabelle tatsächlich nicht zugeordnet | **alle** Fahrten der Firma/Periode scheitern gleich | **Konfiguration** (Lagermax/Axians) |
+
+> Faustregel: Scheitert **nur diese eine Fahrt/Sendung** → verfrühter Objekt-Status (operativ
+> lösbar). Scheitern **alle** vergleichbaren → Kurstabellen-Konfiguration (2nd Level).
 
 ### Nebeneffekt: Status-Inkonsistenz Fahrt ↔ Übersicht
 Ein zuvor abgebrochener „in Kontrolle“-Versuch kann eine **Inkonsistenz** hinterlassen:
@@ -82,40 +100,43 @@ Die **richtige Statuskette** bleibt: `… → auf Fahrt → in Kontrolle → abg
 (→ [10](10_glossar.md) FSW). Die Inkonsistenz ist ein **Symptom**, nicht die Ursache – sie
 verschwindet i. d. R., sobald der FSW nach dem Kurs-Fix sauber durchläuft.
 
-### Diagnose (schnell)
+### Diagnose (schnell) – erst Objekt-Stati, dann Konfiguration
 1. **[Details]** öffnen → `REASON` und `ORA-06512`-Objekt lesen: bestätigt `get_kurs` /
    `SBEL_KURS_UPDATE`.
-2. **Echten Fahrtstatus** in der geöffneten Fahrt ablesen (nicht die Sammelübersicht;
-   nicht die Spalten *Status Beladung/Entladung* – die sind Sendungs-/Scanstatus).
-3. **Belegdatum** aus der Meldung notieren (im Beispiel `2026.08.26`) – dafür fehlt der Kurs.
-4. **Systemisch oder Einzelfall?** Eine **vergleichbare andere Fahrt** derselben Firma/Periode
+2. **Sendungen der Fahrt durchgehen:** Ist eine Sendung **noch im Angebotsstatus** (nicht in
+   eine **Einzelsendung/Auftrag** übertragen, → [07](07_prozesse-logbatt.md) Proz. IX)? Diese
+   Sendung hat keinen sauberen Beleg → sie ist der wahrscheinliche Auslöser.
+3. **LA-Übersicht prüfen:** Hängt eine Abrechnungs-/Druck-**LA** in unfertigem Status (nicht
+   **„fertig zum Drucken“**)? → ebenfalls typischer Auslöser.
+4. **Echten Fahrtstatus** in der geöffneten Fahrt ablesen (nicht die Sammelübersicht; nicht die
+   Spalten *Status Beladung/Entladung* – das sind Sendungs-/Scanstatus).
+5. **Systemisch oder Einzelfall?** Eine vergleichbare **andere** Fahrt derselben Firma/Periode
    testweise auf „in Kontrolle“ setzen:
-   - **Andere scheitern auch** (gleicher Fehler) → **Kurstabelle grundsätzlich nicht
-     zugeordnet/kaputt** → Konfiguration, i. d. R. Fall für **Lagermax/Axians**.
-   - **Andere funktionieren** → das Problem ist **Fahrt-/datumsspezifisch** (z. B. Kurs für
-     diesen Tag fehlt, oder diese Fahrt/ihr Beleg hängt an einer Org ohne Kurstabelle).
+   - **Nur diese Fahrt scheitert** → verfrühter Objekt-Status (Schritt 2/3) → **operativ** lösen.
+   - **Alle scheitern gleich** → **Kurstabelle grundsätzlich nicht zugeordnet** → Konfiguration
+     (2nd Level).
 
-### Abhilfe – Ebene **Stammdaten/Konfiguration** (nicht durch Dispo lösbar)
-> Das ist **kein** Dispo-/Fahrtfehler und aus der Fahrt heraus nicht behebbar. Es liegt auf
-> **Stammdaten-/Konfigurationsebene** – als **Key-User (1st Level)** zuerst selbst prüfen,
-> sonst an **Lagermax/Axians (2nd Level)** eskalieren.
+### Abhilfe
 
-1. **Kurstabelle zuordnen/prüfen (Key-User):** In den **Währungs-/Kurs-Stammdaten (MD PROD)**
-   prüfen, ob der **Firma „LogBATT GmbH“** bzw. der betroffenen Org-Einheit (oder einer
-   **übergeordneten** Einheit in der Org-Hierarchie) eine **Kurstabelle** zugeordnet ist
-   und ob diese für das Belegdatum **gültige Einträge** hat.
-   *(Technisch: Zuordnung `sfir_firma.fir_kutid`, Kurstabelle `skut_t_kurstab`.)*
-2. **Kurs nachpflegen/importieren:** Fehlt der Tages-/Periodenkurs für das Datum → **Kurs
-   pflegen** bzw. Kurstabelle der Org zuordnen. Prüfen, ob ein automatischer Kursimport
-   ausgefallen ist.
-3. **Eskalation (2nd Level):** Ist gar keine Kurstabelle konfiguriert / ist die Zuordnung
-   nicht über die Oberfläche herstellbar → **Ticket an Lagermax/Axians** mit dem
-   technischen Detail unten (Betreiber = Lagermax, Hersteller = Axians/lBase, → [00]).
-4. **Erneut versuchen:** Danach den FSW **aus der geöffneten Fahrt** `auf Fahrt → in Kontrolle`
-   setzen. Läuft die Verrechnung durch, gleichen sich Fahrt und Übersicht ab → anschließend
-   `→ abgeschlossen`.
-5. **Bleibt die Status-Inkonsistenz** nach erfolgreichem FSW bestehen → separat über
-   Lagermax/Axians im Backend geradeziehen lassen.
+**A) Regelfall – verfrühter Objekt-Status (operativ, Auftragsmgmt/Dispo):**
+1. **Sendung aus dem Angebotsstatus holen:** Angenommenes Angebot in eine **Einzelsendung/
+   Auftrag übertragen** (→ [07] Proz. IX; Achtung: irreversibel) → damit entstehen saubere
+   Belegdaten inkl. Org/Währung. Gehört die Sendung gar nicht auf die Fahrt → **von der Fahrt
+   nehmen** (de-disponieren) statt übertragen.
+2. **LA fertigstellen:** Abrechnungs-/Druck-LA auf **„fertig zum Drucken“** bringen.
+3. **Erneut versuchen:** FSW **aus der geöffneten Fahrt** `auf Fahrt → in Kontrolle`. Läuft die
+   Verrechnung durch, gleichen sich Fahrt und Übersicht ab → anschließend `→ abgeschlossen`.
+
+**B) Ausnahme – Kurstabelle wirklich nicht zugeordnet (Konfiguration):**
+Nur wenn Schritt 5 zeigt, dass **alle** vergleichbaren Fahrten scheitern.
+1. **Key-User:** In den **Währungs-/Kurs-Stammdaten (MD PROD)** prüfen, ob der Firma/Org (oder
+   einer übergeordneten Einheit) eine **Kurstabelle** zugeordnet ist und diese fürs Belegdatum
+   gültige Einträge hat. *(Technisch: `sfir_firma.fir_kutid`, `skut_t_kurstab`.)*
+2. **Eskalation (2nd Level):** Ist keine Kurstabelle konfiguriert / nicht über die Oberfläche
+   herstellbar → **Ticket an Lagermax/Axians** mit dem technischen Detail unten.
+
+> **Status-Inkonsistenz** (Fahrt „auf Fahrt“, Übersicht „in Kontrolle“) nach erfolgreichem FSW
+> noch vorhanden → separat über Lagermax/Axians im Backend geradeziehen lassen.
 
 ### Beteiligte DB-Objekte (für IT/Key-User)
 | Objekt | Bedeutung |
@@ -125,7 +146,9 @@ verschwindet i. d. R., sobald der FSW nach dem Kurs-Fix sauber durchläuft.
 | `sorg_t_einheit` (`org_orgid`, `org_orgidh`) | Org-Hierarchie (Baumsuche der gültigen Kurstabelle) |
 | `sfir_firma.fir_kutid` / `sfiw_firwrg` | der Firma zugeordnete **Kurstabelle** / **Firmenwährung** |
 
-### Ticket-Vorlage (Eskalation an Lagermax/Axians – 2nd Level, → [07](07_prozesse-logbatt.md) Support VII)
+### Ticket-Vorlage (nur für Fall **B** – systemische Kurstabellen-Konfig; Eskalation an Lagermax/Axians – 2nd Level, → [07](07_prozesse-logbatt.md) Support VII)
+> Bei Fall **A** (verfrühter Objekt-Status) **kein** Ticket – Sendung aus dem Angebotsstatus
+> holen bzw. LA fertigstellen und FSW wiederholen.
 ```
 Betreff: LogBATT – Fahrt lässt sich nicht auf „in Kontrolle“ setzen (ORA-20994 get_kurs)
 
@@ -142,12 +165,12 @@ Kontext:     FA 8001 LogBATT GmbH · NL 8002 PLO Plochingen · AB 8003 PLO Landv
 ```
 
 ### Merksätze
-- `ORA-20994 … get_kurs … IS NULL` = **Kurstabelle/Wechselkurs fehlt**, nicht „Fahrt kaputt“.
-- Tritt beim **FSW „in Kontrolle“** auf, weil dieser die **interne Verrechnung** (Beleg-Kurs)
-  anstößt.
-- **Stammdaten-/Konfig-Fix**: Key-User prüft Kurstabellen-Zuordnung, sonst Eskalation an
-  **Lagermax/Axians (2nd Level)**; aus der Fahrt/Dispo heraus nicht behebbar.
-- **Gegentest** mit einer anderen Fahrt derselben Firma/Periode trennt „systemisch fehlende
-  Kurstabelle“ von „nur diese Fahrt/dieses Datum“.
+- `ORA-20994 … get_kurs … IS NULL` ist ein **Folgesymptom**, nicht die Ursache: die interne
+  Verrechnung findet keinen Beleg-Kurs.
+- Tritt beim **FSW „in Kontrolle“** auf, weil dieser die **interne Verrechnung** anstößt.
+- **Zuerst Objekt-Stati prüfen:** Sendung noch im **Angebotsstatus**? **LA nicht „fertig zum
+  Drucken“**? → operativ lösbar (Auftragsmgmt/Dispo). Das ist der Regelfall.
+- **Gegentest** (andere Fahrt gleicher Firma/Periode): scheitert **nur diese** → Objekt-Status;
+  scheitern **alle** → Kurstabellen-Konfiguration (dann 2nd Level Lagermax/Axians).
 - Zeigt die Übersicht „in Kontrolle“, die Fahrt aber „auf Fahrt“ → **Abbruch-Nebenwirkung**,
   kein zweiter, eigener Fehler.
