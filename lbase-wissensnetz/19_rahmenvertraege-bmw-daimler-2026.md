@@ -64,24 +64,26 @@ Abgerechnet wird in der Sendung immer gegen den **RV**.
 
 ---
 
-## 2. Entscheidung zuerst: neu anlegen ODER aktualisieren?
+## 2. Der Regelfall: **aktualisieren** — die 4 Stellen (Preise bleiben gleich)
 
-Weil beides **2026-Verlängerungen** eingeführter Kunden sind, ist der **Regelfall
-„aktualisieren"**. Vorgehen exakt nach [18] §4 (Sonderfall „KV/RV existieren schon"):
+Beides sind **2026-Verlängerungen** eingeführter Kunden. Verlängern heißt **nicht neu anlegen**,
+sondern **genau vier Stellen** anpassen — alle auf **RV + Rechnungs-ADRID** verschlüsselt
+(Vollständige Beschreibung: [18] „Bestehenden Rahmenvertrag aktualisieren/verlängern"). Der
+**Kopfvertrag `LMX_LB_KV` gehört NICHT dazu**:
 
-1. **Suchen, ob RV existiert:** Vertrags-/Adressliste → nach Kunde bzw. nach RV-Kandidat filtern
-   (`%F4F691P%`, `%89100%` bzw. `%1260543850%`, `%2010009171%`, `%810035000%`) → RV markieren →
-   **[F6] Anzeigen** → RV-Bezeichnung, ADRID, Laufzeit, Volumen, Verweis auf KV notieren.
-2. **Existiert & passt** → **weiterverwenden**, nur veraltete Felder per **[F7] Ändern**
-   aktualisieren (typisch: **Laufzeit → 31.12.2026** und **Volumen → 48.000 € / 20.000 €**).
-   **Kein Duplikat daneben anlegen** (sonst keine Preise / Kollision).
-3. **Existiert nicht** → **neu anlegen** nach [18] §Schritt 2–3 (KV zuerst, dann RV darunter).
-4. Danach in **beiden** Fällen weiter mit §3 unten (Preise/Elemente prüfen bzw. ergänzen) und
-   §Schritt 7 aus [18] (**Testsendung mit RV → LA ausführen**).
+| # | Stelle | für diesen Fall |
+|---|---|---|
+| 1 | GenTab **`LMX_LB_RV`** (Rahmenverträge LogBATT) | RV-Eintrag BMW **F4F691P** bzw. Daimler **1260543850** (Laufzeit/Volumen) |
+| 2 | GenTab **`LMX_LBATT_KO`** (zu berechnende Einstellungen & Konditionen) | Elemente je **ADRID + RV** |
+| 3 | GenTab **`LMX_LBATT_TX`** (LogBATT-Konditionstexte) | Rechnungstexte/Einheiten je Element |
+| 4 | **Matrizen `PLO_<ADRID>_<RV>_<Element>`** | Preise bleiben gleich → i. d. R. nur RV/Zeitraum |
 
-> **Was ich aus den PDFs NICHT weiß:** ob für BMW/Daimler bereits KV/RV in lBase liegen — das
-> zeigt nur die Live-Suche in Schritt 1. Deshalb steht „aktualisieren" hier als **wahrscheinlich**,
-> nicht als gesichert.
+**Ablauf:** je Stelle die Zeile **[F7] Ändern** (bzw. kopieren und auf aktuellen RV/Zeitraum
+setzen) → **[F12]** → über **`Cust_LOGBATT`** DEV→PROD → **Testsendung mit RV → LA ausführen**.
+
+> **Was ich aus den PDFs NICHT weiß:** die **exakte Feldebene** je GenTab und ob KV/RV real schon
+> vorliegen — das zeigt nur die Live-Suche (`%F4F691P%`, `%810035000%` bzw. `%1260543850%`). Beim
+> nächsten Durchgang die genauen Felder mit dem Key-User festhalten und in [18] ergänzen.
 
 ---
 

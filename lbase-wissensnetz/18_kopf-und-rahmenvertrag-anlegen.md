@@ -192,6 +192,29 @@ Jede Preisspalte im Preisblatt entspricht einem **Berechnungs-Element `X_LOGB_BE
 > Alle Werkzeuge liegen im Ribbon-Reiter **ADMINISTRATION** (Gruppen *Verwaltungstools*,
 > *Generische Tabellen*, *Konfigurationen*) bzw. **ABRECHNUNG** (→ `ANLEITUNG_logik-export.md`).
 
+> ### ♻️ Bestehenden Rahmenvertrag **aktualisieren / verlängern** (Preise bleiben gleich) — **die 4 Stellen**
+> Der **häufigste Regelfall** (z. B. Jahres-Verlängerung eines laufenden Kunden). Wenn sich die
+> **Preise nicht ändern**, wird **nicht neu angelegt** — es werden genau **vier Stellen** angepasst.
+> Alle vier sind auf den **Rahmenvertrag (RV) + die Rechnungs-ADRID** verschlüsselt; deshalb müssen
+> sie **gemeinsam** stimmen (Abweichung an einer Stelle → keine/falsche Abrechnung). Der
+> **Kopfvertrag `LMX_LB_KV` gehört NICHT dazu.**
+>
+> | # | Stelle | Was | Wo (Weg) |
+> |---|---|---|---|
+> | 1 | GenTab **`LMX_LB_RV`** | **Rahmenverträge LogBATT** — der RV-Eintrag selbst (Laufzeit/Volumen/Bezeichnung) | ADMINISTRATION → Generische Tabellen → **Daten** → `LMX_LB_RV` |
+> | 2 | GenTab **`LMX_LBATT_KO`** | **zu berechnende Einstellungen & Konditionen** (abzurechnende Elemente je ADRID+RV) | … → **Daten** → `LMX_LBATT_KO` |
+> | 3 | GenTab **`LMX_LBATT_TX`** | **LogBATT-Konditionstexte** (Rechnungstexte/Einheiten je Element) | … → **Daten** → `LMX_LBATT_TX` |
+> | 4 | **Matrizen** **`PLO_<ADRID>_<RV>_<Element>`** | die Preis-Matrizen (bei reiner Verlängerung bleiben die **Preise gleich**) | ABRECHNUNG → Abrechnung mit Konditionen → **Stammdaten-Matrix** |
+>
+> **Ablauf:** die jeweiligen Zeilen **[F7] Ändern** (bzw. bestehende Zeile **kopieren** und auf den
+> aktuellen RV/Zeitraum setzen), **[F12] Speichern**. Danach über Komponente **`Cust_LOGBATT`**
+> DEV→PROD übertragen und **Testsendung mit RV → LA ausführen** (Schritt 7). „Kein Preis" →
+> `PLO_<ADRID>_<RV>_<Element>` **Zeichen für Zeichen** gegen ADRID/RV/Element prüfen.
+>
+> ⚠️ Die **exakte Feldebene** (welches Feld in `LMX_LB_RV`/`_KO`/`_TX` genau geändert wird und ob
+> je Verlängerung eine **neue Gültigkeit/Zeile** oder ein **In-Place-Update** üblich ist) beim
+> nächsten realen Durchgang mit dem Key-User festhalten und hier ergänzen.
+
 > ### 🔁 Sonderfall: KV/RV existieren **schon** → nicht neu anlegen
 > Ist für den Kunden bereits ein KV **und** RV vorhanden, **Schritt 2–3 überspringen** — sonst
 > entsteht ein **Duplikat/Kollision** (keine Preise). Stattdessen:
