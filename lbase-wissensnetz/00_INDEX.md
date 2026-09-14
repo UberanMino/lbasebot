@@ -124,6 +124,7 @@ werden in die passenden Bausteine eingearbeitet und in `quellen/` protokolliert.
 - **„Wie ist der aktuelle Gesamtprozess (Angebot→Abrechnung, Sammelfaktura, Track&Trace)?“** → [16](16_aktueller-prozess-handbuch.md)
 - **„Wie setze ich manuell einen Sendungsstatus (zugestellt/abgeholt)? Wie läuft die Compliance-/Sanktionsprüfung?“** → [17](17_sendungsstatus-und-compliance.md)
 - **„Wie lege ich einen Kopfvertrag + Rahmenvertrag mit Preisen an?“** → [18](18_kopf-und-rahmenvertrag-anlegen.md)
+- **„Bestehenden Rahmenvertrag VERLÄNGERN/aktualisieren (Preise gleich)? Welche 4 Stellen?“** → [18](18_kopf-und-rahmenvertrag-anlegen.md) (Block „Bestehenden Rahmenvertrag aktualisieren/verlängern": `LMX_LB_RV` + `LMX_LBATT_KO` + `LMX_LBATT_TX` + Matrizen `PLO_…`)
 - **„Konkret: BMW F4F691P / Daimler 1260543850 (2026) anlegen/aktualisieren?“** → [19](19_rahmenvertraege-bmw-daimler-2026.md)
 
 ---
